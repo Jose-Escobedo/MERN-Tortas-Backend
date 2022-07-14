@@ -6,6 +6,7 @@ const {
   verifyTokenAndAdmin,
 } = require("./verifyToken");
 
+//create
 router.post("/", verifyTokenAndAdmin, async (req, res) => {
   const newProduct = new Product(req.body);
   try {

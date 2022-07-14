@@ -4,6 +4,8 @@
 
 ## _MongoDB, Express, React JS, Node JS_
 
+[Link to frontend-repo](https://github.com/Jose-Escobedo/MERN-Tortas-Frontend)
+
 TORTAS MEXICO APP is a full-stack application using the MERN STACK.
 I have slowly been testing out ideas and discussing them with Tortas Mexico.
 I am now ready to create a full-stack application that will help this small business

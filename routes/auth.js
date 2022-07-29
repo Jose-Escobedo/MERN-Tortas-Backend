@@ -3,17 +3,17 @@ const User = require("../models/User");
 const CryptoJS = require("crypto-js");
 const jwt = require("jsonwebtoken");
 
-//Register
-
+//REGISTER
 router.post("/register", async (req, res) => {
   const newUser = new User({
     username: req.body.username,
     email: req.body.email,
     password: CryptoJS.AES.encrypt(
       req.body.password,
-      process.env.SECRET_PASS.toString()
-    ),
+      process.env.SECRET_PASS
+    ).toString(),
   });
+
   try {
     const savedUser = await newUser.save();
     res.status(201).json(savedUser);
@@ -22,20 +22,21 @@ router.post("/register", async (req, res) => {
   }
 });
 
-//Login
+//LOGIN
+
 router.post("/login", async (req, res) => {
   try {
     const user = await User.findOne({ username: req.body.username });
-    !user && res.status(401).json("Wrong Credentials!");
+    !user && res.status(401).json("Wrong credentials!");
 
-    const hashPassword = CryptoJS.AES.decrypt(
+    const hashedPassword = CryptoJS.AES.decrypt(
       user.password,
       process.env.SECRET_PASS
     );
-    const originalPassword = hashPassword.toString(CryptoJS.enc.Utf8);
+    const OriginalPassword = hashedPassword.toString(CryptoJS.enc.Utf8);
 
-    originalPassword !== req.body.password &&
-      res.status(401).json("Wrong Credentials!");
+    OriginalPassword !== req.body.password &&
+      res.status(401).json("Wrong credentials!");
 
     const accessToken = jwt.sign(
       {
@@ -43,12 +44,12 @@ router.post("/login", async (req, res) => {
         isAdmin: user.isAdmin,
       },
       process.env.SECRET_JWT,
-      { expiresIn: "1d" }
+      { expiresIn: "7d" }
     );
 
     const { password, ...others } = user._doc;
 
-    return res.status(200).json({ ...others, accessToken });
+    res.status(200).json({ ...others, accessToken });
   } catch (err) {
     res.status(500).json(err);
   }

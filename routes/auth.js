@@ -55,4 +55,14 @@ router.post("/login", async (req, res) => {
   }
 });
 
+//LOGOUT
+
+router.get("/logout", async (req, res) => {
+  try {
+    res.clearCookie("jwt");
+  } catch (err) {
+    console.log(err);
+  }
+});
+
 module.exports = router;

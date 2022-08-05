@@ -10,6 +10,10 @@ const ordersRoute = require("./routes/order");
 const stripeRoute = require("./routes/stripe");
 const cors = require("cors");
 dotenv.config();
+const corsOptions = {
+  origin: "http://localhost:3006",
+  optionSuccessStatus: 200,
+};
 
 mongoose
   .connect(process.env.MONGO_URL)
@@ -17,7 +21,7 @@ mongoose
   .catch((err) => {
     console.log(err);
   });
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use("/api/users", usersRoute);
 app.use("/api/auth", authRoute);

@@ -1,3 +1,4 @@
+require("dotenv").config();
 const KEY = process.env.SECRET_STRIPE;
 const router = require("express").Router();
 // This is a public sample test API key.
@@ -13,20 +14,27 @@ const calculateOrderAmount = (items) => {
 };
 
 router.post("/payment", async (req, res) => {
-  const { items } = req.body;
+  const { line_items } = req.body;
 
   // Create a PaymentIntent with the order amount and currency
-  const paymentIntent = await stripe.paymentIntents.create({
-    amount: calculateOrderAmount(items),
-    currency: "usd",
-    automatic_payment_methods: {
-      enabled: true,
-    },
+  const session = await stripe.checkout.sessions.create({
+    line_items: [
+      {
+        price_data: {
+          currency: "usd",
+          unit_amount: 500,
+          product_data: {
+            name: "Order Total",
+          },
+        },
+        quantity: 1,
+      },
+    ],
+    mode: "payment",
+    success_url: `http://localhost:3006/success`,
+    cancel_url: `http://localhost:3006/cancel`,
   });
-
-  res.send({
-    clientSecret: paymentIntent.client_secret,
-  });
+  res.json({ url: session.url });
 });
 
 module.exports = router;

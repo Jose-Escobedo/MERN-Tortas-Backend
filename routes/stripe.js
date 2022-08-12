@@ -32,6 +32,10 @@ router.post("/payment", async (req, res) => {
           unit_amount: toCent(req.body.total),
           product_data: {
             name: "Order Total",
+            description: `${req.body.cart.products.map(
+              (item) => ` (${item.quantity}x) ${item.name}`
+            )}`,
+            images: ["https://i.ibb.co/V38LgNJ/tortaslogo-padding.jpg"],
           },
         },
         quantity: 1,

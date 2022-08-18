@@ -43,12 +43,23 @@ router.post("/login", async (req, res) => {
         id: user._id,
         isAdmin: user.isAdmin,
       },
-      process.env.SECRET_JWT,
+      process.env.ACCESS_TOKEN_SECRET,
+      { expiresIn: "1d" }
+    );
+    const refreshToken = jwt.sign(
+      {
+        id: user._id,
+        isAdmin: user.isAdmin,
+      },
+      process.env.REFRESH_TOKEN_SECRET,
       { expiresIn: "7d" }
     );
 
     const { password, ...others } = user._doc;
-
+    res.cookie("jwt", refreshToken, {
+      httpOnly: true,
+      maxAge: 24 * 60 * 60 * 1000,
+    });
     res.status(200).json({ ...others, accessToken });
   } catch (err) {
     res.status(500).json(err);

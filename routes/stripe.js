@@ -17,6 +17,7 @@ const stripe = require("stripe")(KEY);
 router.post("/payment", async (req, res) => {
   const { line_items } = req.body;
   console.log(req.body.cart);
+  console.log(req.body.contact);
   const toCent = (item) => {
     const str = item.toString();
     const int = str.split(".");
@@ -43,9 +44,9 @@ router.post("/payment", async (req, res) => {
     ],
     mode: "payment",
     success_url: `http://localhost:3006/success`,
-    cancel_url: `http://localhost:3006/cancel`,
+    cancel_url: `http://localhost:3006/checkout`,
   });
-  res.json({ url: session.url });
+  res.json({ url: session.url, contact: session.contact });
 });
 
 module.exports = router;

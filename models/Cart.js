@@ -17,7 +17,7 @@ const CartSchema = new mongoose.Schema(
     ],
     amount: { type: Number },
     address: { type: Object },
-    phone: { type: String },
+    phone: { type: Number },
     email: { type: String },
   },
   { timestamps: true }

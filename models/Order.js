@@ -16,7 +16,7 @@ const OrderSchema = new mongoose.Schema(
     ],
     amount: { type: Number, required: true },
     address: { type: Object, required: true },
-    phone: { type: String, required: true },
+    phone: { type: Number, required: true },
     email: { type: String, required: true, unique: true },
     status: { type: String, default: "pending" },
   },

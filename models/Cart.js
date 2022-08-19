@@ -15,6 +15,10 @@ const CartSchema = new mongoose.Schema(
         extras: { type: Array },
       },
     ],
+    amount: { type: Number },
+    address: { type: Object },
+    phone: { type: String },
+    email: { type: String },
   },
   { timestamps: true }
 );

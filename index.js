@@ -8,7 +8,7 @@ const productsRoute = require("./routes/product");
 const cartsRoute = require("./routes/cart");
 const ordersRoute = require("./routes/order");
 const stripeRoute = require("./routes/stripe");
-const doordashRoute = require("./routes/doordashCreate");
+const doordashRoute = require("./routes/doordashGet");
 const cors = require("cors");
 dotenv.config();
 const corsOptions = {

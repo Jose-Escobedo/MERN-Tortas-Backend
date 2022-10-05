@@ -8,7 +8,16 @@ const {
 
 //Create
 router.post("/", verifyToken, async (req, res) => {
-  const newOrder = new Order(req.body);
+  const newOrder = new Order({
+    userId: req.body._id,
+    products: req.body.products,
+    total: req.body.total,
+    address: req.body.address,
+    tip: req.body.tip,
+    phone: req.body.phone,
+    email: req.body.email,
+    status: "pending",
+  });
   try {
     const savedOrder = await newOrder.save();
     res.status(200).json(savedOrder);

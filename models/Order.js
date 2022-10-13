@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const OrderSchema = new mongoose.Schema(
   {
-    userId: { type: String, required: true },
+    userId: { type: String },
     products: [
       {
         productId: {
@@ -16,6 +16,8 @@ const OrderSchema = new mongoose.Schema(
       },
     ],
     total: { type: Number, required: true },
+    taxes: { type: Number, required: true },
+    totalWithTip: { type: Number, required: true },
     address: { type: String, required: true },
     tip: { type: String, required: true },
     phone: { type: String, required: true },

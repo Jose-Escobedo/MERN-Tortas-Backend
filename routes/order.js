@@ -7,13 +7,15 @@ const {
 } = require("./verifyToken");
 
 //Create
-router.post("/", verifyToken, async (req, res) => {
+router.post("/", async (req, res) => {
   const newOrder = new Order({
     userId: req.body._id,
     products: req.body.products,
     total: req.body.total,
+    totalWithTip: req.body.totalWithTip,
     address: req.body.address,
     tip: req.body.tip,
+    taxes: req.body.taxes,
     phone: req.body.phone,
     email: req.body.email,
     status: "pending",

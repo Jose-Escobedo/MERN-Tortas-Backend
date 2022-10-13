@@ -12,7 +12,7 @@ const doordashRoute = require("./routes/doordashGet");
 const cors = require("cors");
 dotenv.config();
 const corsOptions = {
-  origin: "http://localhost:3006",
+  origin: ["http://localhost:3006", "http://localhost:3007"],
   optionSuccessStatus: 200,
 };
 

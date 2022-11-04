@@ -1,5 +1,7 @@
 const router = require("express").Router();
 const Order = require("../models/Order");
+const Product = require("../models/Product");
+const mongoose = require("mongoose");
 const {
   verifyToken,
   verifyTokenAndAuthorization,
@@ -53,9 +55,7 @@ router.post("/", async (req, res) => {
       }
 
       if (flag === 0) {
-        return res
-          .status(500)
-          .json({ msg: "Prices do not match database. Please retry." });
+        return res.status(500).json({ msg: "data price don't match" });
       }
     }
     //console.log("tt", typeof tip);
@@ -109,7 +109,7 @@ router.delete("/:id", verifyTokenAndAdmin, async (req, res) => {
 });
 
 //Get User's Order
-router.get("/find/:userId", verifyTokenAndAuthorization, async (req, res) => {
+router.get("/find/:userId", verifyToken, async (req, res) => {
   try {
     const orders = await Order.find({ userId: req.params.userId });
     return res.status(200).json(orders);

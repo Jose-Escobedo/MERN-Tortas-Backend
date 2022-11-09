@@ -118,6 +118,20 @@ router.get("/find/:userId", verifyToken, async (req, res) => {
   }
 });
 
+//deletes Orders from a specific user without Auth postman
+
+// router.delete("/find/:userId", async (req, res) => {
+//   try {
+//     const orders = await Order.find({ userId: req.params.userId });
+//     Order.remove({ userId: req.params.userId }, function (err) {
+//       if (err) throw err;
+//     });
+//     return res.status(200).json(orders);
+//   } catch (err) {
+//     res.status(500).json(err);
+//   }
+// });
+
 //Get All Orders
 router.get("/", verifyTokenAndAdmin, async (req, res) => {
   try {

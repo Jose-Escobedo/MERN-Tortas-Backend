@@ -1,6 +1,7 @@
 require("dotenv").config();
 const KEY = process.env.SECRET_STRIPE;
 const router = require("express").Router();
+const Order = require("../models/Order");
 // This is a public sample test API key.
 // Don’t submit any personally identifiable information in requests made with this key.
 // Sign in to see your own test API key embedded in code samples.
@@ -75,7 +76,8 @@ router.post("/webhook", (request, response) => {
     case "payment_intent.succeeded":
       const paymentIntent = event.data.object;
       // Then define and call a function to handle the event payment_intent.succeeded
-      console.log(paymentIntent);
+      console.log(paymentIntent.status);
+      response.status(200).send(`Payment Success: ${paymentIntent}`);
       break;
     // ... handle other event types
     default:
@@ -83,7 +85,6 @@ router.post("/webhook", (request, response) => {
   }
 
   // Return a 200 response to acknowledge receipt of the event
-  response.send();
 });
 
 module.exports = router;

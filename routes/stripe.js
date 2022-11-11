@@ -77,13 +77,15 @@ router.post("/webhook", (request, response) => {
       const paymentIntent = event.data.object;
       // Then define and call a function to handle the event payment_intent.succeeded
       console.log(paymentIntent.status);
-      response.status(200).send(`Payment Success: ${paymentIntent}`);
       break;
     // ... handle other event types
     default:
       console.log(`Unhandled event type ${event.type}`);
   }
 
+  if (event.data.object.status === "succeeded") {
+    return response.status(200).send(`Payment Success: true`);
+  }
   // Return a 200 response to acknowledge receipt of the event
 });
 

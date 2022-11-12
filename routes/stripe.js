@@ -1,7 +1,14 @@
 require("dotenv").config();
 const KEY = process.env.SECRET_STRIPE;
 const router = require("express").Router();
-const Order = require("../models/Order");
+const http = require("http");
+const { Server } = require("socket.io");
+const server = http.createServer(router);
+const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:3006",
+  },
+});
 // This is a public sample test API key.
 // Don’t submit any personally identifiable information in requests made with this key.
 // Sign in to see your own test API key embedded in code samples.
@@ -77,14 +84,16 @@ router.post("/webhook", (request, response) => {
       const paymentIntent = event.data.object;
       // Then define and call a function to handle the event payment_intent.succeeded
       console.log(paymentIntent.status);
+      io.on("connection", (socket) => {
+        // socket.on("stripeSuccess", (data) => {
+        //   socket.broadcast.emit("paymentComplete");
+        // });
+        socket.broadcast.emit("paymentComplete");
+      });
       break;
     // ... handle other event types
     default:
       console.log(`Unhandled event type ${event.type}`);
-  }
-
-  if (event.data.object.status === "succeeded") {
-    return response.status(200).send(`Payment Success: true`);
   }
   // Return a 200 response to acknowledge receipt of the event
 });

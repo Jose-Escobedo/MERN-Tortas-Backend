@@ -1,14 +1,9 @@
 require("dotenv").config();
 const KEY = process.env.SECRET_STRIPE;
+const express = require("express");
+const app = express();
 const router = require("express").Router();
-const http = require("http");
-const { Server } = require("socket.io");
-const server = http.createServer(router);
-const io = new Server(server, {
-  cors: {
-    origin: "http://localhost:3006",
-  },
-});
+
 // This is a public sample test API key.
 // Don’t submit any personally identifiable information in requests made with this key.
 // Sign in to see your own test API key embedded in code samples.
@@ -23,6 +18,13 @@ const stripe = require("stripe")(KEY);
 // };
 
 router.post("/payment", async (req, res) => {
+  const customer = await stripe.customers.create({
+    metadata: {
+      userId: req.body.userId,
+      products: JSON.stringify(req.body.cart.products),
+    },
+  });
+
   const { line_items } = req.body;
   console.log(req.body.cart);
   console.log(req.body.contact);
@@ -32,6 +34,7 @@ router.post("/payment", async (req, res) => {
 
     return Number(item.replace(".", "").padEnd(int.length === 1 ? 3 : 4, "0"));
   };
+
   // Create a PaymentIntent with the order amount and currency
   const session = await stripe.checkout.sessions.create({
     line_items: [
@@ -50,6 +53,7 @@ router.post("/payment", async (req, res) => {
         quantity: 1,
       },
     ],
+    customer: customer.id,
     mode: "payment",
     success_url: `http://localhost:3006/success`,
     cancel_url: `http://localhost:3006/checkout`,
@@ -57,45 +61,62 @@ router.post("/payment", async (req, res) => {
   res.json({ url: session.url, contact: session.contact });
 });
 
-const express = require("express");
 // This is your Stripe CLI webhook secret for testing your endpoint locally.
-const endpointSecret =
+let endpointSecret;
+endpointSecret =
   "whsec_bd73383ed0fcf9cfb27bd4929af341605ad32577dfd8825e1143425b846bb3c3";
 
 router.post("/webhook", (request, response) => {
   const sig = request.headers["stripe-signature"];
 
-  let event;
+  let data;
+  let eventType;
 
-  try {
-    event = stripe.webhooks.constructEvent(
-      request.rawBody,
-      sig,
-      endpointSecret
-    ); //@JA - Had to modify this to take the rawBody since this is what was needed.
-  } catch (err) {
-    response.status(400).send(`Webhook Error: ${err.message}`);
-    return;
+  if (endpointSecret) {
+    let event;
+
+    try {
+      event = stripe.webhooks.constructEvent(
+        request.rawBody,
+        sig,
+        endpointSecret
+      ); //@JA - Had to modify this to take the rawBody since this is what was needed.
+    } catch (err) {
+      response.status(400).send(`Webhook Error: ${err.message}`);
+      return;
+    }
+
+    data = event.data.object;
+    eventType = event.type;
+  } else {
+    data = request.body.data.object;
+    eventType = request.body.type;
   }
 
   // Handle the event
-  switch (event.type) {
-    case "payment_intent.succeeded":
-      const paymentIntent = event.data.object;
-      // Then define and call a function to handle the event payment_intent.succeeded
-      console.log(paymentIntent.status);
-      io.on("connection", (socket) => {
-        // socket.on("stripeSuccess", (data) => {
-        //   socket.broadcast.emit("paymentComplete");
-        // });
-        socket.broadcast.emit("paymentComplete");
-      });
-      break;
-    // ... handle other event types
-    default:
-      console.log(`Unhandled event type ${event.type}`);
+  if (eventType === "checkout.session.completed") {
+    stripe.customers
+      .retrieve(data.customer)
+      .then((customer) => {
+        console.log(customer);
+        console.log("data:", data);
+      })
+      .catch((err) => console.log(err.message));
   }
+
+  // switch (event.type) {
+  //   case "checkout.session.completed":
+  //     const paymentIntent = event.data.object;
+  //     // Then define and call a function to handle the event payment_intent.succeeded
+
+  //     break;
+  //   // ... handle other event types
+  //   default:
+  //     console.log(`Unhandled event type ${event.type}`);
+  // }
+
   // Return a 200 response to acknowledge receipt of the event
+  response.send().end();
 });
 
 module.exports = router;

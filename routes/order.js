@@ -22,58 +22,58 @@ router.post("/", async (req, res) => {
     email: req.body.email,
     status: "pending",
   });
-  const allSendDataToDb = req.body.products;
-  const priceFromFront = req.body.total;
-  const totalWithTips = req.body.totalWithTip;
-  const tip = req.body.tip;
-  //console.log("totalwithtip", req.body.totalWithTip);
+  // const allSendDataToDb = req.body.products;
+  // const priceFromFront = req.body.total;
+  // const totalWithTips = req.body.totalWithTip;
+  // const tip = req.body.tip;
+  // //console.log("totalwithtip", req.body.totalWithTip);
   try {
-    const allProducts = await Product.find({ _id: { $in: allSendDataToDb } });
-    //console.log(allProducts);
-    let totalResultDb = 0;
-    let flag = 0;
-    for (let index = 0; index < allSendDataToDb.length; index++) {
-      //const element = allSendDataToDb[index];
+    //   const allProducts = await Product.find({ _id: { $in: allSendDataToDb } });
+    //   //console.log(allProducts);
+    //   let totalResultDb = 0;
+    //   let flag = 0;
+    //   for (let index = 0; index < allSendDataToDb.length; index++) {
+    //     //const element = allSendDataToDb[index];
 
-      let subtotal = 0;
-      for (let index2 = 0; index2 < allProducts.length; index2++) {
-        subtotal =
-          subtotal +
-          allProducts[index2].price * allSendDataToDb[index2].quantity;
-        // console.log("** ", allSendDataToDb[index].price);
-        //console.log("**222 ", allProducts[index2].price);
-        let tax = subtotal * 0.095;
-        totalResultDb = subtotal + tax + 4.99;
-        // console.log("sub", subtotal.toFixed(2));
+    //     let subtotal = 0;
+    //     for (let index2 = 0; index2 < allProducts.length; index2++) {
+    //       subtotal =
+    //         subtotal +
+    //         allProducts[index2].price * allSendDataToDb[index2].quantity;
+    //       // console.log("** ", allSendDataToDb[index].price);
+    //       //console.log("**222 ", allProducts[index2].price);
+    //       let tax = subtotal * 0.095;
+    //       totalResultDb = subtotal + tax + 4.99;
+    //       // console.log("sub", subtotal.toFixed(2));
 
-        if (
-          allSendDataToDb[index]._id === allProducts[index2]._id.toString() &&
-          allSendDataToDb[index].price === allProducts[index2].price
-        ) {
-          flag = 1;
-        }
-      }
+    //       if (
+    //         allSendDataToDb[index]._id === allProducts[index2]._id.toString() &&
+    //         allSendDataToDb[index].price === allProducts[index2].price
+    //       ) {
+    //         flag = 1;
+    //       }
+    //     }
 
-      if (flag === 0) {
-        return res.status(500).json({ msg: "data price don't match" });
-      }
-    }
-    //console.log("tt", typeof tip);
-    if (tip !== 0) {
-      totalResultDb = totalResultDb + parseFloat(tip);
-    }
-    if (
-      priceFromFront.toFixed(2) === totalResultDb.toFixed(2) ||
-      totalResultDb.toFixed(2) === totalWithTips.toFixed(2)
-    ) {
-      //console.log("priceFromFront", priceFromFront.toFixed(2));
-      //console.log("total", totalResultDb.toFixed(2));
-      flag = 1;
-    } else {
-      return res
-        .status(500)
-        .json({ msg: "Prices do not match database. Please retry." });
-    }
+    //     if (flag === 0) {
+    //       return res.status(500).json({ msg: "data price don't match" });
+    //     }
+    //   }
+    //   //console.log("tt", typeof tip);
+    //   if (tip !== 0) {
+    //     totalResultDb = totalResultDb + parseFloat(tip);
+    //   }
+    //   if (
+    //     priceFromFront.toFixed(2) === totalResultDb.toFixed(2) ||
+    //     totalResultDb.toFixed(2) === totalWithTips.toFixed(2)
+    //   ) {
+    //     //console.log("priceFromFront", priceFromFront.toFixed(2));
+    //     //console.log("total", totalResultDb.toFixed(2));
+    //     flag = 1;
+    //   } else {
+    //     return res
+    //       .status(500)
+    //       .json({ msg: "Prices do not match database. Please retry." });
+    //   }
 
     const savedOrder = await newOrder.save();
     return res.status(200).json(savedOrder);

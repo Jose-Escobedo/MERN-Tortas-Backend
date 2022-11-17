@@ -2,6 +2,7 @@ require("dotenv").config();
 const KEY = process.env.SECRET_STRIPE;
 const express = require("express");
 const app = express();
+const Order = require("../models/Order");
 const router = require("express").Router();
 
 // This is a public sample test API key.
@@ -18,10 +19,32 @@ const stripe = require("stripe")(KEY);
 // };
 
 router.post("/payment", async (req, res) => {
+  function selectProps(...props) {
+    return function (obj) {
+      const newObj = {};
+      props.forEach((name) => {
+        newObj[name] = obj[name];
+      });
+
+      return newObj;
+    };
+  }
+
+  const smallCharCart = req.body.cart.products.map(
+    selectProps("name", "quantity")
+  );
+
   const customer = await stripe.customers.create({
     metadata: {
       userId: req.body.userId,
-      products: JSON.stringify(req.body.cart.products),
+      products: JSON.stringify(smallCharCart),
+      address: req.body.address,
+      phone: req.body.phone,
+      tip: req.body.tip,
+      subtotal: req.body.subtotal,
+      taxes: req.body.taxes,
+      totalWithTip: req.body.totalWithTip,
+      email: req.body.email,
     },
   });
 
@@ -61,6 +84,34 @@ router.post("/payment", async (req, res) => {
   res.json({ url: session.url, contact: session.contact });
 });
 
+//create Order
+const createOrder = async (customer, data) => {
+  const cartItems = JSON.parse(customer.metadata.products);
+
+  const newOrder = new Order({
+    userId: customer.metadata.userId,
+    customerId: data.customer,
+    paymentIntentId: data.payment_intent,
+    products: cartItems,
+    subtotal: customer.metadata.subtotal,
+    total: data.amount_total,
+    address: customer.metadata.address,
+    phone: customer.metadata.phone,
+    tip: customer.metadata.tip,
+    taxes: customer.metadata.taxes,
+    totalWithTip: customer.metadata.totalWithTip,
+    email: customer.metadata.email,
+    payment_status: data.payment_status,
+  });
+
+  try {
+    const savedOrder = await newOrder.save();
+    console.log("Processed Order:", savedOrder);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 // This is your Stripe CLI webhook secret for testing your endpoint locally.
 let endpointSecret;
 endpointSecret =
@@ -98,8 +149,9 @@ router.post("/webhook", (request, response) => {
     stripe.customers
       .retrieve(data.customer)
       .then((customer) => {
-        console.log(customer);
-        console.log("data:", data);
+        // console.log(customer);
+        // console.log("data:", data);
+        createOrder(customer, data);
       })
       .catch((err) => console.log(err.message));
   }

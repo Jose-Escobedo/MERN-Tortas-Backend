@@ -80,7 +80,7 @@ router.post("/payment", async (req, res) => {
     customer: customer.id,
     mode: "payment",
     success_url: `http://localhost:3006/success`,
-    cancel_url: `http://localhost:3006/checkout`,
+    cancel_url: `http://localhost:3006/cart`,
   });
   res.json({ url: session.url, contact: session.contact });
 });

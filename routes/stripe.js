@@ -45,6 +45,7 @@ router.post("/payment", async (req, res) => {
       taxes: req.body.taxes,
       totalWithTip: req.body.totalWithTip,
       email: req.body.email,
+      pickup: req.body.pickup,
     },
   });
 
@@ -99,6 +100,7 @@ const createOrder = async (customer, data) => {
     phone: customer.metadata.phone,
     tip: customer.metadata.tip,
     taxes: customer.metadata.taxes,
+    pickup: customer.metadata.pickup,
     totalWithTip: customer.metadata.totalWithTip,
     email: customer.metadata.email,
     payment_status: data.payment_status,

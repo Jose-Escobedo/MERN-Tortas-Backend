@@ -20,6 +20,7 @@ router.post("/", async (req, res) => {
     taxes: req.body.taxes,
     phone: req.body.phone,
     email: req.body.email,
+    pickup: req.body.pickup,
     status: "pending",
   });
   // const allSendDataToDb = req.body.products;

@@ -10,14 +10,6 @@ const router = require("express").Router();
 // Sign in to see your own test API key embedded in code samples.
 const stripe = require("stripe")(KEY);
 
-// const calculateOrderAmount = (items) => {
-//   // Replace this constant with a calculation of the order's amount
-//   // Calculate the order total on the server to prevent
-//   // people from directly manipulating the amount on the client
-//   console.log(items);
-//   return items;
-// };
-
 router.post("/payment", async (req, res) => {
   function selectProps(...props) {
     return function (obj) {
@@ -172,5 +164,14 @@ router.post("/webhook", (request, response) => {
   // Return a 200 response to acknowledge receipt of the event
   response.send().end();
 });
+
+// app.get("/success", async (req, res) => {
+//   const session = await stripe.checkout.sessions.retrieve(req.query.session_id);
+//   const customer = await stripe.customers.retrieve(session.customer);
+
+//   res.send(
+//     `<html><body><h1>Thanks for your order, ${customer.name}!</h1></body></html>`
+//   );
+// });
 
 module.exports = router;

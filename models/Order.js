@@ -20,6 +20,7 @@ const OrderSchema = new mongoose.Schema(
     tip: { type: String, required: true },
     phone: { type: String, required: true },
     email: { type: String, required: true },
+    pickup: { type: Boolean, required: true },
     payment_status: { type: String, default: "pending" },
   },
   { timestamps: true }

@@ -5,10 +5,41 @@ const app = express();
 const Order = require("../models/Order");
 const router = require("express").Router();
 
+const http = require("http");
+const { Server } = require("socket.io");
+const server = http.createServer(app);
+
+const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:3006",
+  },
+});
+
 // This is a public sample test API key.
 // Don’t submit any personally identifiable information in requests made with this key.
 // Sign in to see your own test API key embedded in code samples.
 const stripe = require("stripe")(KEY);
+
+// const calculateOrderAmount = (items) => {
+//   return 1400;
+// };
+
+// router.post("/create-payment-intent", async (req, res) => {
+//   const { items } = req.body;
+
+//   // Create a PaymentIntent with the order amount and currency
+//   const paymentIntent = await stripe.paymentIntents.create({
+//     amount: calculateOrderAmount(),
+//     currency: "usd",
+//     automatic_payment_methods: {
+//       enabled: true,
+//     },
+//   });
+
+//   res.send({
+//     clientSecret: paymentIntent.client_secret,
+//   });
+// });
 
 router.post("/payment", async (req, res) => {
   function selectProps(...props) {
@@ -143,8 +174,8 @@ router.post("/webhook", (request, response) => {
     stripe.customers
       .retrieve(data.customer)
       .then((customer) => {
-        // console.log(customer);
-        // console.log("data:", data);
+        console.log("customer:", customer);
+        console.log("data:", data);
         createOrder(customer, data);
       })
       .catch((err) => console.log(err.message));
@@ -164,14 +195,5 @@ router.post("/webhook", (request, response) => {
   // Return a 200 response to acknowledge receipt of the event
   response.send().end();
 });
-
-// app.get("/success", async (req, res) => {
-//   const session = await stripe.checkout.sessions.retrieve(req.query.session_id);
-//   const customer = await stripe.customers.retrieve(session.customer);
-
-//   res.send(
-//     `<html><body><h1>Thanks for your order, ${customer.name}!</h1></body></html>`
-//   );
-// });
 
 module.exports = router;

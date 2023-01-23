@@ -15,6 +15,8 @@ router.post("/", async (req, res) => {
     products: req.body.products,
     total: req.body.total,
     totalWithTip: req.body.totalWithTip,
+    pickup_instructions: req.body.pickup_instructions,
+    dropoff_instructions: req.body.dropoff_instructions,
     address: req.body.address,
     tip: req.body.tip,
     taxes: req.body.taxes,

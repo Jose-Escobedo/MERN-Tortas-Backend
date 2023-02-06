@@ -86,20 +86,35 @@ router.post("/", async (req, res) => {
   }
 });
 
-// Update
-router.put("/:id", verifyTokenAndAdmin, async (req, res) => {
-  try {
-    const updatedOrder = await Order.findByIdAndUpdate(
-      req.params.id,
-      {
-        $set: req.body,
-      },
-      { new: true }
-    );
-    res.status(200).json(updatedOrder);
-  } catch (err) {
-    res.status(500).json(err);
-  }
+//Update
+// router.put("/:id", verifyTokenAndAdmin, async (req, res) => {
+//   try {
+//     const updatedOrder = await Order.findByIdAndUpdate(
+//       req.params.id,
+//       {
+//         $set: req.body,
+//       },
+//       { new: true }
+//     );
+//     res.status(200).json(updatedOrder);
+//   } catch (err) {
+//     res.status(500).json(err);
+//   }
+// });
+
+// Update to Paid
+router.put("/:id", (req, res) => {
+  const updatedOrder = Order.findByIdAndUpdate(
+    req.params.id,
+    { payment_status: "paid" },
+    function (err, result) {
+      if (err) {
+        res.send(err);
+      } else {
+        res.send(result);
+      }
+    }
+  );
 });
 
 //Delete

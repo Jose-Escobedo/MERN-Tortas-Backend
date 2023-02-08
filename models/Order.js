@@ -7,10 +7,11 @@ const OrderSchema = new mongoose.Schema(
     paymentIntentId: { type: String },
     products: [
       {
-        id: { type: String },
         name: { type: String, required: true },
-        quantity: { type: Number },
-        notes: { type: String },
+        extras: { type: Array },
+        price: { type: Number, required: true },
+        quantity: { type: Number, required: true },
+        note: { type: Array },
       },
     ],
     subtotal: { type: Number, required: true },

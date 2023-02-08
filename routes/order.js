@@ -11,9 +11,11 @@ const {
 //Create
 router.post("/", async (req, res) => {
   const newOrder = Order({
-    userId: req.body._id,
+    idForStripe: req.body.idForStripe,
+    userId: req.body.userId,
     products: req.body.products,
     total: req.body.total,
+    subtotal: req.body.subtotal,
     totalWithTip: req.body.totalWithTip,
     pickup_instructions: req.body.pickup_instructions,
     dropoff_instructions: req.body.dropoff_instructions,
@@ -23,7 +25,6 @@ router.post("/", async (req, res) => {
     phone: req.body.phone,
     email: req.body.email,
     pickup: req.body.pickup,
-    status: "pending",
   });
   // const allSendDataToDb = req.body.products;
   // const priceFromFront = req.body.total;
@@ -102,10 +103,25 @@ router.post("/", async (req, res) => {
 //   }
 // });
 
+// Update to Paid with params
+// router.put("/:id", (req, res) => {
+//   const updatedOrder = Order.findByIdAndUpdate(
+//     req.params.id,
+//     { payment_status: "paid" },
+//     function (err, result) {
+//       if (err) {
+//         res.send(err);
+//       } else {
+//         res.send(result);
+//       }
+//     }
+//   );
+// });
+
 // Update to Paid
-router.put("/:id", (req, res) => {
+router.put("/order-paid", (req, res) => {
   const updatedOrder = Order.findByIdAndUpdate(
-    req.params.id,
+    req.body.orderLinker,
     { payment_status: "paid" },
     function (err, result) {
       if (err) {

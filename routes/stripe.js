@@ -42,33 +42,25 @@ const stripe = require("stripe")(KEY);
 // });
 
 router.post("/payment", async (req, res) => {
-  function selectProps(...props) {
-    return function (obj) {
-      const newObj = {};
-      props.forEach((name) => {
-        newObj[name] = obj[name];
-      });
+  // function selectProps(...props) {
+  //   return function (obj) {
+  //     const newObj = {};
+  //     props.forEach((name) => {
+  //       newObj[name] = obj[name];
+  //     });
 
-      return newObj;
-    };
-  }
+  //     return newObj;
+  //   };
+  // }
 
-  const smallCharCart = req.body.cart.products.map(
-    selectProps("name", "quantity")
-  );
+  // const smallCharCart = req.body.cart.products.map(
+  //   selectProps("name", "quantity")
+  // );
 
   const customer = await stripe.customers.create({
     metadata: {
       userId: req.body.userId,
-      products: JSON.stringify(smallCharCart),
-      address: req.body.address,
-      phone: req.body.phone,
-      tip: req.body.tip,
-      subtotal: req.body.subtotal,
-      taxes: req.body.taxes,
-      totalWithTip: req.body.totalWithTip,
-      email: req.body.email,
-      pickup: req.body.pickup,
+      stripeIdentifier: req.body.idForStripe,
     },
   });
 
@@ -108,30 +100,15 @@ router.post("/payment", async (req, res) => {
   res.json({ url: session.url, contact: session.contact });
 });
 
-//create Order
-const createOrder = async (customer, data) => {
-  const cartItems = JSON.parse(customer.metadata.products);
-
-  const newOrder = new Order({
-    userId: customer.metadata.userId,
-    customerId: data.customer,
-    paymentIntentId: data.payment_intent,
-    products: cartItems,
-    subtotal: customer.metadata.subtotal,
-    total: data.amount_total,
-    address: customer.metadata.address,
-    phone: customer.metadata.phone,
-    tip: customer.metadata.tip,
-    taxes: customer.metadata.taxes,
-    pickup: customer.metadata.pickup,
-    totalWithTip: customer.metadata.totalWithTip,
-    email: customer.metadata.email,
-    payment_status: data.payment_status,
-  });
-
+//Update To Paid
+const updatePaymentStatus = async (customer, data) => {
+  const orderLinker = customer.metadata.stripeIdentifier;
   try {
-    const savedOrder = await newOrder.save();
-    console.log("Processed Order:", savedOrder);
+    Order.findOneAndUpdate(
+      { idForStripe: orderLinker },
+      { payment_status: "paid" }
+    );
+    console.log(orderLinker);
   } catch (error) {
     console.log(error);
   }
@@ -176,7 +153,7 @@ router.post("/webhook", (request, response) => {
       .then((customer) => {
         console.log("customer:", customer);
         console.log("data:", data);
-        createOrder(customer, data);
+        updatePaymentStatus(customer, data);
       })
       .catch((err) => console.log(err.message));
   }

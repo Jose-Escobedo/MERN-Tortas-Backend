@@ -104,10 +104,9 @@ router.post("/payment", async (req, res) => {
 const updatePaymentStatus = async (customer, data) => {
   const orderLinker = customer.metadata.stripeIdentifier;
   try {
-    Order.findOneAndUpdate(
-      { idForStripe: orderLinker },
-      { payment_status: "paid" }
-    );
+    const updatedOrder = await Order.findByIdAndUpdate(orderLinker, {
+      payment_status: "paid",
+    });
     console.log(orderLinker);
   } catch (error) {
     console.log(error);

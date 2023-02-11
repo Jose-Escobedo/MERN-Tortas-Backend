@@ -24,7 +24,7 @@ const token = jwt.sign(
 );
 
 const body = JSON.stringify({
-  external_delivery_id: "D-12345",
+  external_delivery_id: "D-123456",
   pickup_address: "901 Market Street 6th Floor San Francisco, CA 94103",
   pickup_business_name: "Wells Fargo SF Downtown",
   pickup_phone_number: "+16505555555",

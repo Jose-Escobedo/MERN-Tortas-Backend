@@ -4,10 +4,12 @@ const express = require("express");
 const app = express();
 const Order = require("../models/Order");
 const router = require("express").Router();
-
 const http = require("http");
 const { Server } = require("socket.io");
 const server = http.createServer(app);
+const jwt = require("jsonwebtoken");
+const axios = require("axios");
+const uuidv4 = require("uuid").v4;
 
 const io = new Server(server, {
   cors: {
@@ -15,9 +17,28 @@ const io = new Server(server, {
   },
 });
 
-// This is a public sample test API key.
-// Don’t submit any personally identifiable information in requests made with this key.
-// Sign in to see your own test API key embedded in code samples.
+const accessKey = {
+  developer_id: process.env.DEVELOPER_DOORDASH,
+  key_id: process.env.ACCESS_DOORDASH,
+  signing_secret: process.env.SECRET_DOORDASH,
+};
+
+const data = {
+  aud: "doordash",
+  iss: accessKey.developer_id,
+  kid: accessKey.key_id,
+  exp: Math.floor(Date.now() / 1000 + 60),
+  iat: Math.floor(Date.now() / 1000),
+};
+
+const headers = { algorithm: "HS256", header: { "dd-ver": "DD-JWT-V1" } };
+
+const token = jwt.sign(
+  data,
+  Buffer.from(accessKey.signing_secret, "base64"),
+  headers
+);
+
 const stripe = require("stripe")(KEY);
 
 // const calculateOrderAmount = (items) => {
@@ -60,6 +81,8 @@ router.post("/payment", async (req, res) => {
   const customer = await stripe.customers.create({
     metadata: {
       userId: req.body.userId,
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
       stripeIdentifier: req.body.idForStripe,
     },
   });
@@ -113,6 +136,44 @@ const updatePaymentStatus = async (customer, data) => {
   }
 };
 
+const doordashDelivery = async (customer, data) => {
+  const orderLinker = customer.metadata.stripeIdentifier;
+  try {
+    const sentOrderInfo = await Order.find({ _id: orderLinker });
+
+    const body = JSON.stringify({
+      external_delivery_id: orderLinker,
+      pickup_address: "11040 Ventura Blvd Studio City, CA 91604",
+      pickup_business_name: "Tortas Mexico Studio City",
+      pickup_phone_number: "+18187602571",
+      pickup_instructions:
+        "Tortas Mexico Studio City. Located Inside plaza by Super Cuts. ",
+      dropoff_address: sentOrderInfo.dropoff_address,
+      dropoff_contact_given_name: sentOrderInfo.firstName,
+      dropoff_contact_family_name: sentOrderInfo.lastName,
+      dropoff_phone_number: sentOrderInfo.phone,
+      dropoff_instructions: sentOrderInfo.dropoff_instructions,
+      order_value: 1999,
+    });
+
+    axios
+      .post("https://openapi.doordash.com/drive/v2/deliveries", body, {
+        headers: {
+          Authorization: "Bearer " + token,
+          "Content-Type": "application/json",
+        },
+      })
+      .then(function (response) {
+        console.log(response.data);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 // This is your Stripe CLI webhook secret for testing your endpoint locally.
 let endpointSecret;
 endpointSecret =
@@ -153,6 +214,7 @@ router.post("/webhook", (request, response) => {
         console.log("customer:", customer);
         console.log("data:", data);
         updatePaymentStatus(customer, data);
+        doordashDelivery(customer, data);
       })
       .catch((err) => console.log(err.message));
   }

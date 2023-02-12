@@ -27,7 +27,7 @@ const data = {
   aud: "doordash",
   iss: accessKey.developer_id,
   kid: accessKey.key_id,
-  exp: Math.floor(Date.now() / 1000 + 60),
+  exp: Math.floor(Date.now() / 1000 + 600),
   iat: Math.floor(Date.now() / 1000),
 };
 
@@ -139,18 +139,30 @@ const doordashDelivery = async (customer, data) => {
   try {
     const sentOrderInfo = await Order.find({ _id: orderLinker });
 
+    // const body = JSON.stringify({
+    //   external_delivery_id: orderLinker.toString(),
+    //   pickup_address: "11040 Ventura Blvd Studio City, CA 91604",
+    //   pickup_business_name: "Tortas Mexico Studio City",
+    //   pickup_phone_number: "+18187602571",
+    //   pickup_instructions:
+    //     "Tortas Mexico Studio City. Located Inside plaza by Super Cuts. ",
+    //   dropoff_address: sentOrderInfo.dropoff_address,
+    //   dropoff_contact_given_name: sentOrderInfo.dropoff_contact_given_name,
+    //   dropoff_contact_family_name: sentOrderInfo.dropoff_contact_family_name,
+    //   dropoff_phone_number: sentOrderInfo.phone,
+    //   dropoff_instructions: sentOrderInfo.dropoff_instructions,
+    //   order_value: 1999,
+    // });
     const body = JSON.stringify({
-      external_delivery_id: orderLinker.toString(),
-      pickup_address: "11040 Ventura Blvd Studio City, CA 91604",
-      pickup_business_name: "Tortas Mexico Studio City",
-      pickup_phone_number: "+18187602571",
-      pickup_instructions:
-        "Tortas Mexico Studio City. Located Inside plaza by Super Cuts. ",
-      dropoff_address: sentOrderInfo.dropoff_address,
-      dropoff_contact_given_name: sentOrderInfo.firstName,
-      dropoff_contact_family_name: sentOrderInfo.lastName,
-      dropoff_phone_number: sentOrderInfo.phone,
-      dropoff_instructions: sentOrderInfo.dropoff_instructions,
+      external_delivery_id: "D-123457",
+      pickup_address: "901 Market Street 6th Floor San Francisco, CA 94103",
+      pickup_business_name: "Wells Fargo SF Downtown",
+      pickup_phone_number: "+16505555555",
+      pickup_instructions: "Enter gate code 1234 on the callbox.",
+      dropoff_address: "901 Market Street 6th Floor San Francisco, CA 94103",
+      dropoff_business_name: "Wells Fargo SF Downtown",
+      dropoff_phone_number: "+16505555555",
+      dropoff_instructions: "Enter gate code 1234 on the callbox.",
       order_value: 1999,
     });
 

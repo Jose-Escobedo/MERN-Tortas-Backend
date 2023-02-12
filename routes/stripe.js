@@ -81,8 +81,6 @@ router.post("/payment", async (req, res) => {
   const customer = await stripe.customers.create({
     metadata: {
       userId: req.body.userId,
-      firstName: req.body.firstName,
-      lastName: req.body.lastName,
       stripeIdentifier: req.body.idForStripe,
     },
   });
@@ -142,7 +140,7 @@ const doordashDelivery = async (customer, data) => {
     const sentOrderInfo = await Order.find({ _id: orderLinker });
 
     const body = JSON.stringify({
-      external_delivery_id: orderLinker,
+      external_delivery_id: orderLinker.toString(),
       pickup_address: "11040 Ventura Blvd Studio City, CA 91604",
       pickup_business_name: "Tortas Mexico Studio City",
       pickup_phone_number: "+18187602571",

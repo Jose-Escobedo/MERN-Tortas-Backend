@@ -11,7 +11,6 @@ const {
 //Create
 router.post("/", async (req, res) => {
   const newOrder = Order({
-    idForStripe: req.body.idForStripe,
     userId: req.body.userId,
     products: req.body.products,
     total: req.body.total,
@@ -19,6 +18,8 @@ router.post("/", async (req, res) => {
     totalWithTip: req.body.totalWithTip,
     pickup_instructions: req.body.pickup_instructions,
     dropoff_instructions: req.body.dropoff_instructions,
+    dropoff_contact_given_name: req.body.dropoff_contact_given_name,
+    dropoff_contact_family_name: req.body.dropoff_contact_family_name,
     address: req.body.address,
     tip: req.body.tip,
     taxes: req.body.taxes,

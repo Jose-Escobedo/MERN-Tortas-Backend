@@ -138,50 +138,46 @@ const doordashDelivery = async (customer, data) => {
   const orderLinker = customer.metadata.stripeIdentifier;
   try {
     const sentOrderInfo = await Order.find({ _id: orderLinker });
-
-    // const body = JSON.stringify({
-    //   external_delivery_id: orderLinker.toString(),
-    //   pickup_address: "11040 Ventura Blvd Studio City, CA 91604",
-    //   pickup_business_name: "Tortas Mexico Studio City",
-    //   pickup_phone_number: "+18187602571",
-    //   pickup_instructions:
-    //     "Tortas Mexico Studio City. Located Inside plaza by Super Cuts. ",
-    //   dropoff_address: sentOrderInfo.dropoff_address,
-    //   dropoff_contact_given_name: sentOrderInfo.dropoff_contact_given_name,
-    //   dropoff_contact_family_name: sentOrderInfo.dropoff_contact_family_name,
-    //   dropoff_phone_number: sentOrderInfo.phone,
-    //   dropoff_instructions: sentOrderInfo.dropoff_instructions,
-    //   order_value: 1999,
-    // });
-    const body = JSON.stringify({
-      external_delivery_id: "D-123457",
-      pickup_address: "901 Market Street 6th Floor San Francisco, CA 94103",
-      pickup_business_name: "Wells Fargo SF Downtown",
-      pickup_phone_number: "+16505555555",
-      pickup_instructions: "Enter gate code 1234 on the callbox.",
-      dropoff_address: "901 Market Street 6th Floor San Francisco, CA 94103",
-      dropoff_business_name: "Wells Fargo SF Downtown",
-      dropoff_phone_number: "+16505555555",
-      dropoff_instructions: "Enter gate code 1234 on the callbox.",
-      order_value: 1999,
-    });
-
-    axios
-      .post("https://openapi.doordash.com/drive/v2/deliveries", body, {
-        headers: {
-          Authorization: "Bearer " + token,
-          "Content-Type": "application/json",
-        },
-      })
-      .then(function (response) {
-        console.log(response.data);
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
+    handleDeliveryRequest(sentOrderInfo);
   } catch (error) {
     console.log(error);
   }
+};
+
+const handleDeliveryRequest = (sentOrderInfo) => {
+  const toCent = (item) => {
+    const str = item.toString();
+    const int = str.split(".");
+
+    return Number(item.replace(".", "").padEnd(int.length === 1 ? 3 : 4, "0"));
+  };
+  const body = JSON.stringify({
+    external_delivery_id: String(sentOrderInfo[0]._id),
+    pickup_address: "11040 Ventura Blvd Studio City, CA 91604",
+    pickup_business_name: "Tortas Mexico Studio City",
+    pickup_phone_number: "+18187602571",
+    pickup_instructions: "Located in Plaza next to Super Cuts.",
+    dropoff_address: sentOrderInfo[0].address,
+    dropoff_business_name: sentOrderInfo[0].dropoff_contact_given_name,
+    dropoff_phone_number: sentOrderInfo[0].phone,
+    dropoff_instructions: sentOrderInfo[0].dropoff_instructions,
+    tip: sentOrderInfo[0].tip * 100,
+    order_value: sentOrderInfo[0].total * 100,
+  });
+
+  axios
+    .post("https://openapi.doordash.com/drive/v2/deliveries", body, {
+      headers: {
+        Authorization: "Bearer " + token,
+        "Content-Type": "application/json",
+      },
+    })
+    .then(function (response) {
+      console.log(response.data);
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
 };
 
 // This is your Stripe CLI webhook secret for testing your endpoint locally.

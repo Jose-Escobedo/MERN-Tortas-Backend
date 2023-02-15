@@ -138,7 +138,12 @@ const doordashDelivery = async (customer, data) => {
   const orderLinker = customer.metadata.stripeIdentifier;
   try {
     const sentOrderInfo = await Order.find({ _id: orderLinker });
-    handleDeliveryRequest(sentOrderInfo);
+    const pickupBoolean = sentOrderInfo[0].pickup;
+    if (pickupBoolean) {
+      console.log("This is a pickup order!");
+    } else {
+      handleDeliveryRequest(sentOrderInfo);
+    }
   } catch (error) {
     console.log(error);
   }

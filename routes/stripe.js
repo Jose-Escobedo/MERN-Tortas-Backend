@@ -107,7 +107,9 @@ router.post("/payment", async (req, res) => {
             description: `${req.body.cart.products.map(
               (item) => ` (${item.quantity}x) ${item.name}`
             )}`,
-            images: ["https://i.ibb.co/V38LgNJ/tortaslogo-padding.jpg"],
+            images: [
+              "https://firebasestorage.googleapis.com/v0/b/tortas-bffc7.appspot.com/o/tortaslogo.jpg?alt=media&token=124e2ade-1541-4831-89a1-a3f655c56b9b",
+            ],
           },
         },
         quantity: 1,

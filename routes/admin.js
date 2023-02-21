@@ -1,31 +1,18 @@
 const router = require("express").Router();
-const User = require("../models/User");
+const Order = require("../models/Order");
 const {
   verifyToken,
   verifyTokenAndAuthorization,
   verifyTokenAndAdmin,
 } = require("./verifyToken");
 
-//Update
-router.put("/:id", verifyTokenAndAuthorization, async (req, res) => {
-  if (req.body.password) {
-    req.body.password = CryptoJS.AES.encrypt(
-      user.password,
-      process.env.SECRET_PASS
-    ).toString();
-  }
-
+//
+router.get("/Orders", verifyTokenAndAdmin, async (req, res) => {
   try {
-    const updatedUser = await User.findByIdAndUpdate(
-      req.params.id,
-      {
-        $set: req.body,
-      },
-      { new: true }
-    );
-    res.status(200).json(updatedUser);
+    const orders = await Order.find();
+    return res.status(200).json(orders);
   } catch (err) {
-    res.status(500).json(err);
+    return res.status(500).json(err);
   }
 });
 
@@ -40,7 +27,7 @@ router.get("/find/:id", verifyTokenAndAdmin, async (req, res) => {
   }
 });
 
-//Get last 5 users
+//Get All Users
 router.get("/", verifyTokenAndAdmin, async (req, res) => {
   const query = req.query.new;
   try {

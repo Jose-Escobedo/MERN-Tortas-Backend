@@ -8,6 +8,7 @@ const productsRoute = require("./routes/product");
 const cartsRoute = require("./routes/cart");
 const ordersRoute = require("./routes/order");
 const stripeRoute = require("./routes/stripe");
+const adminRoute = require("./routes/admin");
 const doordashRoute = require("./routes/doordashGet");
 const cors = require("cors");
 
@@ -53,6 +54,7 @@ app.use("/api/products", productsRoute);
 app.use("/api/carts", cartsRoute);
 app.use("/api/orders", ordersRoute);
 app.use("/api/checkout", stripeRoute);
+app.use("/api/admin", adminRoute);
 app.set("/api/doordash", doordashRoute);
 // app.use("/api/doordash", doordashRouteGet);
 

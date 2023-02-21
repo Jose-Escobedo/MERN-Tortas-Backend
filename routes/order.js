@@ -169,8 +169,21 @@ router.get("/find/:userId", verifyToken, async (req, res) => {
 //   }
 // });
 
+//Get last 5 Orders
+router.get("/", verifyTokenAndAdmin, async (req, res) => {
+  const query = req.query.new;
+  try {
+    const orders = query
+      ? await Order.find().sort({ _id: -1 }).limit(5)
+      : await Order.find();
+    res.status(200).json(orders);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+
 //Get All Orders
-router.get("/allOrders", verifyTokenAndAdmin, async (req, res) => {
+router.get("/Orders", verifyTokenAndAdmin, async (req, res) => {
   try {
     const orders = await Order.find();
     return res.status(200).json(orders);

@@ -183,10 +183,10 @@ router.get("/", verifyTokenAndAdmin, async (req, res) => {
 });
 
 //Get Order by Id
-router.get("/find/:id", verifyTokenAndAdmin, async (req, res) => {
+router.get("/find/order/:id", verifyTokenAndAdmin, async (req, res) => {
   try {
-    const product = await Product.findById(req.params.id);
-    return res.status(200).json(product);
+    const order = await Order.findById(req.params.id);
+    return res.status(200).json(order);
   } catch (err) {
     res.status(500).json(err);
   }

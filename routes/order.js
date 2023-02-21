@@ -192,16 +192,6 @@ router.get("/find/order/:id", verifyTokenAndAdmin, async (req, res) => {
   }
 });
 
-//Get All Orders
-router.get("/Orders", verifyTokenAndAdmin, async (req, res) => {
-  try {
-    const orders = await Order.find();
-    return res.status(200).json(orders);
-  } catch (err) {
-    return res.status(500).json(err);
-  }
-});
-
 //Get Order Stats
 router.get("/stats", verifyTokenAndAdmin, async (req, res) => {
   const productId = req.query.pid;

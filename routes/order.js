@@ -182,6 +182,16 @@ router.get("/", verifyTokenAndAdmin, async (req, res) => {
   }
 });
 
+//Get Order by Id
+router.get("/find/:id", verifyTokenAndAdmin, async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id);
+    return res.status(200).json(product);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+
 //Get All Orders
 router.get("/Orders", verifyTokenAndAdmin, async (req, res) => {
   try {

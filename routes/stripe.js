@@ -151,6 +151,17 @@ const doordashDelivery = async (customer, data) => {
   }
 };
 
+const handleDoordashResponse = async (res, id) => {
+  try {
+    const UpdatedOrder = await Order.findByIdAndUpdate(id, {
+      doordashSupportId: res.data.support_reference,
+    });
+    console.log(id);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 const handleDeliveryRequest = (sentOrderInfo) => {
   const toCent = (item) => {
     const str = item.toString();
@@ -180,7 +191,8 @@ const handleDeliveryRequest = (sentOrderInfo) => {
       },
     })
     .then(function (response) {
-      console.log(response.data);
+      console.log(response);
+      handleDoordashResponse(response, String(sentOrderInfo[0]._id));
     })
     .catch(function (error) {
       console.log(error);

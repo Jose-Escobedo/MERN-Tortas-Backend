@@ -27,6 +27,7 @@ const OrderSchema = new mongoose.Schema(
     phone: { type: String, required: true },
     email: { type: String, required: true },
     pickup: { type: Boolean, required: true },
+    doordashSupportId: { type: String, default: "pending" },
     payment_status: { type: String, default: "pending" },
   },
   { timestamps: true }

@@ -10,6 +10,7 @@ const server = http.createServer(app);
 const jwt = require("jsonwebtoken");
 const axios = require("axios");
 const uuidv4 = require("uuid").v4;
+const nodeMailer = require("nodemailer");
 
 const io = new Server(server, {
   cors: {
@@ -40,6 +41,43 @@ const token = jwt.sign(
 );
 
 const stripe = require("stripe")(KEY);
+
+async function sendEmail(sentOrderInfo) {
+  const productHtml = sentOrderInfo[0].products.map((item) => {
+    return `<h1>
+        ${item.quantity} X ${item.name}
+      </h1>`;
+  });
+  const Email = `
+  <h1>Hello, ${sentOrderInfo[0].dropoff_contact_given_name}</h1>
+  <br></br>
+  <span>Thank you so much for your purchase!</span>
+  <br></br>
+  <h1>Order Details</h1>
+  <br></br>
+  ${productHtml}
+  <br></br>
+  <h1>Order Total: ${sentOrderInfo[0].total}</h1>
+  <img src="https://firebasestorage.googleapis.com/v0/b/tortas-bffc7.appspot.com/o/tortaslogo.svg?alt=media&token=de3cbe59-838d-4539-b764-e0eb35710c6d" width= "400">
+`;
+  const transporter = nodeMailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 465,
+    secure: true,
+    auth: {
+      user: `${process.env.EMAIL_USER}`,
+      pass: `${process.env.EMAIL_PASS}`,
+    },
+  });
+
+  const info = await transporter.sendMail({
+    from: "Tortas Mexico Studio City <support@tortasmexico-studiocity.com>",
+    to: sentOrderInfo[0].email,
+    subject: "Thank You For Your Order!",
+    html: Email,
+  });
+  console.log("Message Sent: " + info.messageId);
+}
 
 // const calculateOrderAmount = (items) => {
 //   return 1400;
@@ -143,8 +181,10 @@ const doordashDelivery = async (customer, data) => {
     const pickupBoolean = sentOrderInfo[0].pickup;
     if (pickupBoolean) {
       console.log("This is a pickup order!");
+      sendEmail(sentOrderInfo).catch((e) => console.log(e));
     } else {
       handleDeliveryRequest(sentOrderInfo);
+      sendEmail(sentOrderInfo).catch((e) => console.log(e));
     }
   } catch (error) {
     console.log(error);

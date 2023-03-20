@@ -13,6 +13,7 @@ const OrderSchema = new mongoose.Schema(
         quantity: { type: Number, required: true },
         note: { type: Array },
         itemCombo: { type: Array },
+        variety: { type: Array },
       },
     ],
     subtotal: { type: Number, required: true },

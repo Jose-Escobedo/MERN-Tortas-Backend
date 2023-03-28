@@ -43,16 +43,12 @@ const token = jwt.sign(
 const stripe = require("stripe")(KEY);
 
 async function sendEmail(sentOrderInfo) {
-  const productHtml = sentOrderInfo[0].products.map((item) => {
-    return `<div>
+  const productHtml = sentOrderInfo[0].products
+    .map((item) => {
+      return `<div>
     <h2 style="font-weight:700;">${item.quantity} X ${
-      item.name
-    } $${item.price.toFixed(2)}</h2>
-    <h2>EXTRAS:</h2>
-    <h2 style="font-weight:300;">${item.extras.map(
-      (extra) => `${extra},
-    `
-    )}</h2>
+        item.name
+      } $${item.price.toFixed(2)}</h2>
     <h2>VARIATION:</h2>
     <h2 style="font-weight:300;">${item.itemCombo[0]?.firstItem.replace(
       /-/g,
@@ -64,10 +60,18 @@ async function sendEmail(sentOrderInfo) {
       " "
     )}</h2>
     <h2 style="font-weight:300;">${item.variety[0]?.secondItem}</h2>
+    <h2>EXTRAS:</h2>
+    <h2 style="font-weight:300;">${item.extras
+      .map(
+        (extra) => `${extra},
+    `
+      )
+      .join("<br>")}</h2>
     <h2>NOTE:</h2>
     <h2 style="font-weight:300;">${item.note}</h2>
    </div>`;
-  });
+    })
+    .join("<br>");
 
   let TrackingLink;
   if (sentOrderInfo[0].doordashTrackingLink === "pending") {

@@ -44,21 +44,78 @@ const stripe = require("stripe")(KEY);
 
 async function sendEmail(sentOrderInfo) {
   const productHtml = sentOrderInfo[0].products.map((item) => {
-    return `<h1>
-        ${item.quantity} X ${item.name}
-      </h1>`;
+    return `<div>
+    <h2 style="font-weight:700;">${item.quantity} X ${item.name}</h2>
+    <h2>EXTRAS:</h2>
+    <h2 style="font-weight:300;">${item.extras.map(
+      (extra) => `${extra},
+    `
+    )}</h2>
+    <h2>VARIATION:</h2>
+    <h2 style="font-weight:300;">${item.itemCombo.firstItem.replace(
+      /-/g,
+      " "
+    )}</h2>
+    <h2 style="font-weight:300;">${item.variety.firstItem}</h2>
+    <h2 style="font-weight:300;">${item.itemCombo.secondItem.replace(
+      /-/g,
+      " "
+    )}</h2>
+    <h2 style="font-weight:300;">${item.variety.secondItem}</h2>
+    <h2>NOTE:</h2>
+    <h2 style="font-weight:300;">${item.note}</h2>
+   </div>`;
   });
+
+  let TrackingLink;
+  if (sentOrderInfo[0].doordashTrackingLink === "pending") {
+    return null;
+  } else {
+    TrackingLink = sentOrderInfo[0].doordashTrackingLink;
+  }
+
   const Email = `
-  <h1>Hello, ${sentOrderInfo[0].dropoff_contact_given_name}</h1>
-  <br></br>
-  <span>Thank you so much for your purchase!</span>
-  <br></br>
-  <h1>Order Details</h1>
-  <br></br>
-  ${productHtml}
-  <br></br>
-  <h1>Order Total: ${sentOrderInfo[0].total}</h1>
-  <img src="https://firebasestorage.googleapis.com/v0/b/tortas-bffc7.appspot.com/o/tortaslogo.svg?alt=media&token=de3cbe59-838d-4539-b764-e0eb35710c6d" width= "400">
+  <html style="font-family: 'Montserrat', sans-serif;">
+  <head><link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;700&display=swap" rel="stylesheet">
+  </head>
+ <div style="display: flex; flex-direction:column; justify-content:center; align-items:center; border: 1px solid grey; border-top:none;border-left:none;border-right:none">
+   <img style="padding: 10px"src="https://firebasestorage.googleapis.com/v0/b/tortas-bffc7.appspot.com/o/tortaslogo.svg?alt=media&token=de3cbe59-838d-4539-b764-e0eb35710c6d" width= "50px">
+   <h1>Tortas Mexico Studio City</h1>
+ </div>
+ <div style="display: flex; flex-direction:column; justify-content:center; align-items:center; padding:20px; background-color:#F8F8FF;">
+   <h1>Hello, ${sentOrderInfo[0].dropoff_contact_given_name}</h1>
+   <h2>Thank you so much for your purchase!</h2>
+   <div>
+   ${TrackingLink}
+   <div>
+ </div>
+ <div style="display: flex; flex-direction:column; justify-content:center; align-items:center; padding:20px; background-color:#F8F8FF;">
+   <h1 style="font-weight:700; border-bottom:1px solid black">ORDER SUMMARY:</h1>
+   ${productHtml}
+   <div style="display: flex; flex-direction:column; justify-content:center; align-items:center; padding:20px">
+    <h2>Order Total: ${sentOrderInfo[0].total.toFixed(2)}</h2>
+   </div>
+ </div>
+
+ <footer style="display: flex; flex-direction:column; justify-content:center; align-items:center; padding:20px;  border: 1px solid grey;border-left:none;border-right:none; border-bottom:none"><a style=" 
+  text-decoration: none; color:teal; padding-bottom:10px;" 
+  href="https://www.google.com/maps/place/Tortas+Mexico+Restaurant/@34.140505,-118.3736457,17z/data=!3m1!4b1!4m5!3m4!1s0x80c2be150a3a4a87:0x4bb0951e3b36f3c2!8m2!3d34.1405406!4d-118.3715541?hl=en">
+            11040 Ventura Blvd, Studio City CA 91604
+          </a>
+          <a href="tel:+18187602571" style=" text-decoration: none; color: teal; padding-bottom:10px;">
+            +1 (818) 760-2571
+          </a>
+          <a style=" text-decoration: none; color:teal; padding-bottom:10px;" href="https://www.tortasmexico-studiocity.com">
+            tortasmexico-studiocity.com
+          </a>
+          <a href="mailto:support@tortasmexico-studiocity.com" style=" text-decoration: none; color:teal;">
+            support@tortasmexico-studiocity.com
+          </a>
+ </footer>
+</html>
+  
 `;
   const transporter = nodeMailer.createTransport({
     host: "smtp.gmail.com",
@@ -191,10 +248,21 @@ const doordashDelivery = async (customer, data) => {
   }
 };
 
-const handleDoordashResponse = async (res, id) => {
+const handleDoordashId = async (res, id) => {
   try {
-    const UpdatedOrder = await Order.findByIdAndUpdate(id, {
+    const UpdatedOrderId = await Order.findByIdAndUpdate(id, {
       doordashSupportId: res.data.support_reference,
+    });
+    console.log(id);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const handleDoordashTracking = async (res, id) => {
+  try {
+    const UpdatedOrderTracking = await Order.findByIdAndUpdate(id, {
+      doordashTrackingLink: res.data.tracking_url,
     });
     console.log(id);
   } catch (error) {
@@ -232,7 +300,8 @@ const handleDeliveryRequest = (sentOrderInfo) => {
     })
     .then(function (response) {
       console.log(response);
-      handleDoordashResponse(response, String(sentOrderInfo[0]._id));
+      handleDoordashId(response, String(sentOrderInfo[0]._id));
+      handleDoordashTracking(response, String(sentOrderInfo[0]._id));
     })
     .catch(function (error) {
       console.log(error);

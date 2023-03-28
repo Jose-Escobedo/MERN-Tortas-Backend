@@ -30,6 +30,7 @@ const OrderSchema = new mongoose.Schema(
     email: { type: String, required: true },
     pickup: { type: Boolean, required: true },
     doordashSupportId: { type: String, default: "pending" },
+    doordashTrackingLink: { type: String, default: "pending" },
     payment_status: { type: String, default: "pending" },
   },
   { timestamps: true }

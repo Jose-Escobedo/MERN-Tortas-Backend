@@ -11,7 +11,7 @@ const jwt = require("jsonwebtoken");
 const axios = require("axios");
 const uuidv4 = require("uuid").v4;
 const nodeMailer = require("nodemailer");
-const moment = require("moment");
+const moment = require("moment-timezone");
 
 const io = new Server(server, {
   cors: {
@@ -56,7 +56,7 @@ async function sendEmail(sentOrderInfo) {
     Pickup = `<h2 style="font-size:1.5rem;">PICKUP</h2>`;
   } else {
     Pickup = `<h2 style="font-size:1rem;">DELIVERY</h2>
-    <h2 style="font-size:1rem;>${sentOrderInfo[0].address}</h2>
+    <h2 style="font-size:1rem;">${sentOrderInfo[0].address}</h2>
     `;
   }
 
@@ -152,9 +152,9 @@ async function sendEmail(sentOrderInfo) {
      sentOrderInfo[0].dropoff_contact_given_name
    }</h1>
    <h2 style="font-size:1rem;">Thank you so much for your order!</h2>
-   <h2 style="font-size:1rem;">ORDER CREATED AT: <br></br> ${moment(
-     sentOrderInfo[0]?.createdAt
-   ).format("MM.DD. h:mm A")}
+   <h2 style="font-size:1rem;">ORDER CREATED AT: <br></br> ${moment()
+     .add("00:27", "HH:mm")
+     .format("MM.DD. h:mm A")}
   </h2>
   ${Pickup}
  </div>
@@ -163,11 +163,17 @@ async function sendEmail(sentOrderInfo) {
       <h1 style="font-weight:700; font-size: 2rem; border-bottom:1px solid black;">ORDER SUMMARY:</h1>
    </div>
    ${productHtml}
+   <div>
    <h2 style="font-size:1rem">Subtotal: $ ${sentOrderInfo[0].subtotal.toFixed(
      2
    )}</h2>
-   <h2 style="font-size:1rem">Taxes: $ ${sentOrderInfo[0].taxes.toFixed(2)}</h2>
-   <h2 style="font-size:1rem">Tip: $ ${sentOrderInfo[0].tip}</h2>
+  
+      <h2 style="font-size:1rem">Taxes: $ ${sentOrderInfo[0].taxes.toFixed(
+        2
+      )}</h2>
+      <h2 style="font-size:1rem">Delivery Fee: $ 4.99</h2>
+      <h2 style="font-size:1rem">Tip: $ ${sentOrderInfo[0].tip}</h2>
+   </div>
    <div style="display: flex; flex-direction:column; justify-content:center; align-items:center; padding:20px">
     <h2>Order Total: $ ${sentOrderInfo[0].total.toFixed(2)}</h2>
    </div>

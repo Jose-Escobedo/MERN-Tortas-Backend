@@ -331,7 +331,7 @@ const handlePaymentIntentId = async (customer, data) => {
     const UpdatedPaymentIntent = await Order.findByIdAndUpdate(orderLinker, {
       paymentIntentId: data.payment_intent,
     });
-    console.log(id);
+    console.log(UpdatedPaymentIntent);
   } catch (error) {
     console.log(error);
   }

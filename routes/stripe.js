@@ -11,6 +11,7 @@ const jwt = require("jsonwebtoken");
 const axios = require("axios");
 const uuidv4 = require("uuid").v4;
 const nodeMailer = require("nodemailer");
+const moment = require("moment");
 
 const io = new Server(server, {
   cors: {
@@ -43,42 +44,98 @@ const token = jwt.sign(
 const stripe = require("stripe")(KEY);
 
 async function sendEmail(sentOrderInfo) {
+  let note;
+  let extras;
+  let itemComboOne;
+  let itemVarietyOne;
+  let itemComboTwo;
+  let itemVarietyTwo;
+  let Pickup;
+
+  if (sentOrderInfo[0].address === "11040 Ventura Blvd Studio City, CA 91604") {
+    Pickup = `<h2 style="font-size:1.5rem;">PICKUP</h2>`;
+  } else {
+    Pickup = `<h2 style="font-size:1rem;">DELIVERY</h2>
+    <h2 style="font-size:1rem;>${sentOrderInfo[0].address}</h2>
+    `;
+  }
+
   const productHtml = sentOrderInfo[0].products
     .map((item) => {
-      return `<div>
+      if (
+        !item.note ||
+        item.note === "" ||
+        item.note[0] === "" ||
+        item.note.length === 0
+      ) {
+        note = "";
+      } else {
+        note = item.note;
+      }
+
+      if (
+        !item.itemCombo[0]?.firstItem ||
+        item.itemCombo[0]?.firstItem === ""
+      ) {
+        itemComboOne = "";
+      } else {
+        itemComboOne = `<h2 style="font-weight:300; font-size:1rem;">${item.itemCombo[0]?.firstItem.replace(
+          /-/g,
+          " "
+        )}</h2>`;
+      }
+      if (!item.variety[0]?.firstItem || item.variety[0]?.firstItem === "") {
+        itemVarietyOne = "";
+      } else {
+        itemVarietyOne = `<h2 style="font-weight:300; font-size:1rem;">${item.variety[0]?.firstItem.replace(
+          /-/g,
+          " "
+        )}</h2>`;
+      }
+      if (
+        !item.itemCombo[0]?.secondItem ||
+        item.itemCombo[0]?.secondItem === ""
+      ) {
+        itemComboTwo = "";
+      } else {
+        itemComboTwo = `<h2 style="font-weight:300; font-size:1rem;">${item.itemCombo[0]?.secondItem.replace(
+          /-/g,
+          " "
+        )}</h2>`;
+      }
+      if (!item.variety[0]?.secondItem || item.variety[0]?.secondItem === "") {
+        itemVarietyTwo = "";
+      } else {
+        itemVarietyTwo = `<h2 style="font-weight:300; font-size:1rem;">${item.variety[0]?.secondItem.replace(
+          /-/g,
+          " "
+        )}</h2>`;
+      }
+
+      if (item.extras.length == 0 || item.extras[0] == "") {
+        extras = "";
+      } else {
+        extras = `<h2 style="font-weight:300; font-size:1rem;">${item.extras.map(
+          (extra) => `${extra}<br>`
+        )}</h2>`;
+      }
+
+      return `<div style = "border-bottom: 1px solid black;">
     <h2 style="font-weight:700;">${item.quantity} X ${
         item.name
       } $${item.price.toFixed(2)}</h2>
-    <h2>VARIATION:</h2>
-    <h2 style="font-weight:300;">${item.itemCombo[0]?.firstItem.replace(
-      /-/g,
-      " "
-    )}</h2>
-    <h2 style="font-weight:300;">${item.variety[0]?.firstItem}</h2>
-    <h2 style="font-weight:300;">${item.itemCombo[0]?.secondItem.replace(
-      /-/g,
-      " "
-    )}</h2>
-    <h2 style="font-weight:300;">${item.variety[0]?.secondItem}</h2>
-    <h2>EXTRAS:</h2>
-    <h2 style="font-weight:300;">${item.extras
-      .map(
-        (extra) => `${extra},
-    `
-      )
-      .join("<br>")}</h2>
-    <h2>NOTE:</h2>
-    <h2 style="font-weight:300;">${item.note}</h2>
+    <h2 style="font-size:1rem;">VARIATION:</h2>
+      ${itemComboOne}
+      ${itemVarietyOne}
+      ${itemComboTwo}
+      ${itemVarietyTwo}
+    <h2 style="font-size:1rem;">EXTRAS:</h2>
+      ${extras}
+    <h2 style="font-size:1rem;">NOTE:</h2>
+    <h2 style="font-weight:300; font-size:1rem;">${note}</h2>
    </div>`;
     })
     .join("<br>");
-
-  let TrackingLink;
-  if (sentOrderInfo[0].doordashTrackingLink === "pending") {
-    TrackingLink = "pending";
-  } else {
-    TrackingLink = sentOrderInfo[0].doordashTrackingLink;
-  }
 
   const Email = `
   <html style="font-family: 'Montserrat', sans-serif;">
@@ -88,35 +145,46 @@ async function sendEmail(sentOrderInfo) {
   </head>
  <div style="display: flex; flex-direction:column; justify-content:center; align-items:center; border: 1px solid grey; border-top:none;border-left:none;border-right:none">
    <img style="padding: 10px"src="https://firebasestorage.googleapis.com/v0/b/tortas-bffc7.appspot.com/o/tortaslogo.svg?alt=media&token=de3cbe59-838d-4539-b764-e0eb35710c6d" width= "50px">
-   <h1>Tortas Mexico Studio City</h1>
+   <h1 style="font-size:1.2rem;">Tortas Mexico Studio City</h1>
  </div>
  <div style="display: flex; flex-direction:column; justify-content:center; align-items:center; padding:20px; background-color:#F8F8FF;">
-   <h1>Hello, ${sentOrderInfo[0].dropoff_contact_given_name}</h1>
-   <h2>Thank you so much for your order!</h2>
-   <div>
-   ${TrackingLink}
-   <div>
+   <h1 style="font-size:1.5rem;">Hello, ${
+     sentOrderInfo[0].dropoff_contact_given_name
+   }</h1>
+   <h2 style="font-size:1rem;">Thank you so much for your order!</h2>
+   <h2 style="font-size:1rem;">ORDER CREATED AT: <br></br> ${moment(
+     sentOrderInfo[0]?.createdAt
+   ).format("MM.DD. h:mm A")}
+  </h2>
+  ${Pickup}
  </div>
- <div style="display: flex; flex-direction:column; justify-content:center; align-items:center; padding:20px; background-color:#F8F8FF;">
-   <h1 style="font-weight:700; border-bottom:1px solid black">ORDER SUMMARY:</h1>
+ <div style="display: flex; flex-direction:column;   padding:20px; background-color:#F8F8FF;">
+    <div style=" margin: auto">
+      <h1 style="font-weight:700; font-size: 2rem; border-bottom:1px solid black;">ORDER SUMMARY:</h1>
+   </div>
    ${productHtml}
+   <h2 style="font-size:1rem">Subtotal: $ ${sentOrderInfo[0].subtotal.toFixed(
+     2
+   )}</h2>
+   <h2 style="font-size:1rem">Taxes: $ ${sentOrderInfo[0].taxes.toFixed(2)}</h2>
+   <h2 style="font-size:1rem">Tip: $ ${sentOrderInfo[0].tip}</h2>
    <div style="display: flex; flex-direction:column; justify-content:center; align-items:center; padding:20px">
-    <h2>Order Total: ${sentOrderInfo[0].total.toFixed(2)}</h2>
+    <h2>Order Total: $ ${sentOrderInfo[0].total.toFixed(2)}</h2>
    </div>
  </div>
 
  <footer style="display: flex; flex-direction:column; justify-content:center; align-items:center; padding:20px;  border: 1px solid grey;border-left:none;border-right:none; border-bottom:none"><a style=" 
-  text-decoration: none; color:teal; padding-bottom:10px;" 
+  text-decoration: none; color:teal; padding-bottom:10px; font-size:.8rem;" 
   href="https://www.google.com/maps/place/Tortas+Mexico+Restaurant/@34.140505,-118.3736457,17z/data=!3m1!4b1!4m5!3m4!1s0x80c2be150a3a4a87:0x4bb0951e3b36f3c2!8m2!3d34.1405406!4d-118.3715541?hl=en">
             11040 Ventura Blvd, Studio City CA 91604
           </a>
-          <a href="tel:+18187602571" style=" text-decoration: none; color: teal; padding-bottom:10px;">
+          <a href="tel:+18187602571" style="font-size:.8rem; text-decoration: none; color: teal; padding-bottom:10px;">
             +1 (818) 760-2571
           </a>
-          <a style=" text-decoration: none; color:teal; padding-bottom:10px;" href="https://www.tortasmexico-studiocity.com">
+          <a style="font-size:.8rem; text-decoration: none; color:teal; padding-bottom:10px;" href="https://www.tortasmexico-studiocity.com">
             tortasmexico-studiocity.com
           </a>
-          <a href="mailto:support@tortasmexico-studiocity.com" style=" text-decoration: none; color:teal;">
+          <a href="mailto:support@tortasmexico-studiocity.com" style="font-size:.8rem; text-decoration: none; color:teal;">
             support@tortasmexico-studiocity.com
           </a>
  </footer>

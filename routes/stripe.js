@@ -53,9 +53,9 @@ async function sendEmail(sentOrderInfo) {
   let Pickup;
 
   if (sentOrderInfo[0].address === "11040 Ventura Blvd Studio City, CA 91604") {
-    Pickup = `<h2 style="font-size:1.5rem;">PICKUP</h2>`;
+    Pickup = `<h2 style="font-size:1.2rem;">PICKUP</h2>`;
   } else {
-    Pickup = `<h2 style="font-size:1rem;">DELIVERY</h2>
+    Pickup = `<h2 style="font-size:1.2rem;">DELIVERY</h2>
     <h2 style="font-size:1rem;">${sentOrderInfo[0].address}</h2>
     `;
   }
@@ -311,6 +311,32 @@ const updatePaymentStatus = async (customer, data) => {
   }
 };
 
+//Handle Customer Stripe Id
+const handleCustomerStripeId = async (customer, data) => {
+  const orderLinker = customer.metadata.stripeIdentifier;
+  try {
+    const UpdatedCustomerStripeId = await Order.findByIdAndUpdate(orderLinker, {
+      customerId: customer.id,
+    });
+    console.log(id);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+//Handle payment Intent Id
+const handlePaymentIntentId = async (customer, data) => {
+  const orderLinker = customer.metadata.stripeIdentifier;
+  try {
+    const UpdatedPaymentIntent = await Order.findByIdAndUpdate(orderLinker, {
+      paymentIntentId: data.payment_intent,
+    });
+    console.log(id);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 const doordashDelivery = async (customer, data) => {
   const orderLinker = customer.metadata.stripeIdentifier;
   try {
@@ -429,6 +455,8 @@ router.post("/webhook", (request, response) => {
         console.log("data:", data);
         updatePaymentStatus(customer, data);
         doordashDelivery(customer, data);
+        handleCustomerStripeId(customer, data);
+        handlePaymentIntentId(customer, data);
       })
       .catch((err) => console.log(err.message));
   }

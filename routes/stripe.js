@@ -56,7 +56,7 @@ async function sendEmail(sentOrderInfo) {
     Pickup = `<h2 style="font-size:1.2rem;">PICKUP</h2>`;
   } else {
     Pickup = `<h2 style="font-size:1.2rem;">DELIVERY</h2>
-    <h2 style="font-size:1rem;">${sentOrderInfo[0].address}</h2>
+    <h2  style="font-size:1rem; text-align: center;">${sentOrderInfo[0].address}</h2>
     `;
   }
 
@@ -70,7 +70,8 @@ async function sendEmail(sentOrderInfo) {
       ) {
         note = "";
       } else {
-        note = item.note;
+        note = `   <h2 style="font-size:1rem;">NOTE:</h2>
+        <h2 style="font-weight:300; font-size:1rem;">${item.note}</h2>`;
       }
 
       if (
@@ -79,7 +80,8 @@ async function sendEmail(sentOrderInfo) {
       ) {
         itemComboOne = "";
       } else {
-        itemComboOne = `<h2 style="font-weight:300; font-size:1rem;">${item.itemCombo[0]?.firstItem.replace(
+        itemComboOne = `   <h2 style="font-size:1rem;">VARIATION:</h2>
+        <h2 style="font-weight:300; font-size:1rem;">${item.itemCombo[0]?.firstItem.replace(
           /-/g,
           " "
         )}</h2>`;
@@ -115,7 +117,8 @@ async function sendEmail(sentOrderInfo) {
       if (item.extras.length == 0 || item.extras[0] == "") {
         extras = "";
       } else {
-        extras = `<h2 style="font-weight:300; font-size:1rem;">${item.extras.map(
+        extras = `  <h2 style="font-size:1rem;">EXTRAS:</h2>
+        <h2 style="font-weight:300; font-size:1rem;">${item.extras.map(
           (extra) => `${extra}<br>`
         )}</h2>`;
       }
@@ -124,15 +127,12 @@ async function sendEmail(sentOrderInfo) {
     <h2 style="font-weight:700;">${item.quantity} X ${
         item.name
       } $${item.price.toFixed(2)}</h2>
-    <h2 style="font-size:1rem;">VARIATION:</h2>
       ${itemComboOne}
       ${itemVarietyOne}
       ${itemComboTwo}
       ${itemVarietyTwo}
-    <h2 style="font-size:1rem;">EXTRAS:</h2>
       ${extras}
-    <h2 style="font-size:1rem;">NOTE:</h2>
-    <h2 style="font-weight:300; font-size:1rem;">${note}</h2>
+      ${note}
    </div>`;
     })
     .join("<br>");
@@ -152,10 +152,12 @@ async function sendEmail(sentOrderInfo) {
      sentOrderInfo[0].dropoff_contact_given_name
    }</h1>
    <h2 style="font-size:1rem;">Thank you so much for your order!</h2>
-   <h2 style="font-size:1rem;">ORDER CREATED AT: <br></br> ${moment()
-     .add("00:27", "HH:mm")
-     .format("MM.DD. h:mm A")}
+   <h2 style="font-size:1rem;">ORDER CREATED AT:</h2> 
+   <h2 style="font-size:1rem; text-align: center;">${moment().format(
+     "MM.DD. h:mm A"
+   )}
   </h2>
+
   ${Pickup}
  </div>
  <div style="display: flex; flex-direction:column;   padding:20px; background-color:#F8F8FF;">
@@ -179,7 +181,7 @@ async function sendEmail(sentOrderInfo) {
    </div>
  </div>
 
- <footer style="display: flex; flex-direction:column; justify-content:center; align-items:center; padding:20px;  border: 1px solid grey;border-left:none;border-right:none; border-bottom:none"><a style=" 
+ <div style="display: flex; flex-direction:column; justify-content:center; align-items:center; padding:20px;  border: 1px solid grey;border-left:none;border-right:none; border-bottom:none;"><a style=" 
   text-decoration: none; color:teal; padding-bottom:10px; font-size:.8rem;" 
   href="https://www.google.com/maps/place/Tortas+Mexico+Restaurant/@34.140505,-118.3736457,17z/data=!3m1!4b1!4m5!3m4!1s0x80c2be150a3a4a87:0x4bb0951e3b36f3c2!8m2!3d34.1405406!4d-118.3715541?hl=en">
             11040 Ventura Blvd, Studio City CA 91604
@@ -193,7 +195,7 @@ async function sendEmail(sentOrderInfo) {
           <a href="mailto:support@tortasmexico-studiocity.com" style="font-size:.8rem; text-decoration: none; color:teal;">
             support@tortasmexico-studiocity.com
           </a>
- </footer>
+ </div>
 </html>
   
 `;
@@ -331,7 +333,7 @@ const handlePaymentIntentId = async (customer, data) => {
     const UpdatedPaymentIntent = await Order.findByIdAndUpdate(orderLinker, {
       paymentIntentId: data.payment_intent,
     });
-    console.log(UpdatedPaymentIntent);
+    console.log(UpdatedPaymentIntentw);
   } catch (error) {
     console.log(error);
   }

@@ -19,6 +19,8 @@ router.post("/", async (req, res) => {
     pickup_instructions: req.body.pickup_instructions,
     dropoff_instructions: req.body.dropoff_instructions,
     pickup_instructions: req.body.pickup_instructions,
+    pickup_date: req.body.pickup_date,
+    pickup_time: req.body.pickup_time,
     dropoff_contact_given_name: req.body.dropoff_contact_given_name,
     dropoff_contact_family_name: req.body.dropoff_contact_family_name,
     address: req.body.address,

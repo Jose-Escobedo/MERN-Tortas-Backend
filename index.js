@@ -45,5 +45,5 @@ app.set("/api/doordash", doordashRoute);
 // app.use("/api/doordash", doordashRouteGet);
 
 app.listen(process.env.PORT || 5000, () => {
-  console.log("backend is running!!");
+  console.log("backend is running!");
 });

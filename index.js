@@ -14,7 +14,7 @@ const cors = require("cors");
 
 dotenv.config();
 const corsOptions = {
-  origin: ["http://localhost:3006", "http://localhost:3007"],
+  origin: ["https://tortasfrontend.herokuapp.com/"],
   optionSuccessStatus: 200,
 };
 

@@ -58,6 +58,10 @@ app.use("/api/admin", adminRoute);
 app.set("/api/doordash", doordashRoute);
 // app.use("/api/doordash", doordashRouteGet);
 
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static("client/build"));
+}
+
 server.listen(process.env.PORT || 5000, () => {
   console.log("backend is running!");
 });

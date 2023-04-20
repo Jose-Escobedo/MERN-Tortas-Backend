@@ -412,8 +412,7 @@ const handleDeliveryRequest = (sentOrderInfo) => {
 
 // This is your Stripe CLI webhook secret for testing your endpoint locally.
 let endpointSecret;
-endpointSecret =
-  "whsec_bd73383ed0fcf9cfb27bd4929af341605ad32577dfd8825e1143425b846bb3c3";
+endpointSecret = process.env.STRIPE_ENDPOINT_SECRET;
 
 router.post("/webhook", (request, response) => {
   const sig = request.headers["stripe-signature"];

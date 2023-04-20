@@ -13,12 +13,6 @@ const uuidv4 = require("uuid").v4;
 const nodeMailer = require("nodemailer");
 const moment = require("moment-timezone");
 
-const io = new Server(server, {
-  cors: {
-    origin: "http://localhost:3006",
-  },
-});
-
 const accessKey = {
   developer_id: process.env.DEVELOPER_DOORDASH,
   key_id: process.env.ACCESS_DOORDASH,
@@ -294,8 +288,8 @@ router.post("/payment", async (req, res) => {
     ],
     customer: customer.id,
     mode: "payment",
-    success_url: `http://localhost:3006/success`,
-    cancel_url: `http://localhost:3006/cart`,
+    success_url: `https://www.tortasmexico-studiocity.com/success`,
+    cancel_url: `https://www.tortasmexico-studiocity.com/cart`,
   });
   res.json({ url: session.url, contact: session.contact });
 });

@@ -48,7 +48,7 @@ async function sendEmail(sentOrderInfo) {
   let deliveryFee;
 
   if (sentOrderInfo[0].pickup) {
-    deliveryFee = null;
+    deliveryFee = "";
   } else {
     deliveryFee = `<h2 style="font-size:1rem">Delivery Fee: $ 4.99</h2>`;
   }

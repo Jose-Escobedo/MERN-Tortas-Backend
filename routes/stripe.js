@@ -410,7 +410,6 @@ const handleDeliveryRequest = (sentOrderInfo) => {
     });
 };
 
-// This is your Stripe CLI webhook secret for testing your endpoint locally.
 let endpointSecret;
 endpointSecret = process.env.STRIPE_ENDPOINT_SECRET;
 

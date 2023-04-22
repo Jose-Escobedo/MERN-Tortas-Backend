@@ -187,12 +187,15 @@ async function sendEmail(sentOrderInfo) {
   href="https://www.google.com/maps/place/Tortas+Mexico+Restaurant/@34.140505,-118.3736457,17z/data=!3m1!4b1!4m5!3m4!1s0x80c2be150a3a4a87:0x4bb0951e3b36f3c2!8m2!3d34.1405406!4d-118.3715541?hl=en">
             11040 Ventura Blvd, Studio City CA 91604
           </a>
+          <br></br>
           <a href="tel:+18187602571" style="font-size:.8rem; text-decoration: none; color: teal; padding-bottom:10px;">
             +1 (818) 760-2571
           </a>
+          <br></br>
           <a style="font-size:.8rem; text-decoration: none; color:teal; padding-bottom:10px;" href="https://www.tortasmexico-studiocity.com">
             tortasmexico-studiocity.com
           </a>
+          <br></br>
           <a href="mailto:support@tortasmexico-studiocity.com" style="font-size:.8rem; text-decoration: none; color:teal;">
             support@tortasmexico-studiocity.com
           </a>

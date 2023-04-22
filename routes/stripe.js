@@ -45,6 +45,13 @@ async function sendEmail(sentOrderInfo) {
   let itemComboTwo;
   let itemVarietyTwo;
   let Pickup;
+  let deliveryFee;
+
+  if (sentOrderInfo[0].pickup) {
+    deliveryFee = null;
+  } else {
+    deliveryFee = `<h2 style="font-size:1rem">Delivery Fee: $ 4.99</h2>`;
+  }
 
   if (sentOrderInfo[0].address === "11040 Ventura Blvd Studio City, CA 91604") {
     Pickup = `<h2 style="font-size:1.2rem;">PICKUP</h2>`;
@@ -167,7 +174,7 @@ async function sendEmail(sentOrderInfo) {
       <h2 style="font-size:1rem">Taxes: $ ${sentOrderInfo[0].taxes.toFixed(
         2
       )}</h2>
-      <h2 style="font-size:1rem">Delivery Fee: $ 4.99</h2>
+      ${deliveryFee}
       <h2 style="font-size:1rem">Tip: $ ${sentOrderInfo[0].tip}</h2>
    </div>
    <div style="display: flex; flex-direction:column; justify-content:center; align-items:center; padding:20px">

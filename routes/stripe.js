@@ -410,10 +410,9 @@ const handleDeliveryRequest = (sentOrderInfo) => {
     });
 };
 
-let endpointSecret;
-endpointSecret = process.env.STRIPE_ENDPOINT_SECRET;
-
 router.post("/webhook", (request, response) => {
+  let endpointSecret;
+  endpointSecret = process.env.STRIPE_ENDPOINT_SECRET;
   const sig = request.headers["stripe-signature"];
 
   let data;

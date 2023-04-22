@@ -21,8 +21,8 @@ const accessKey = {
 
 const data = {
   aud: "doordash",
-  iss: accessKey.developer_id,
-  kid: accessKey.key_id,
+  iss: process.env.DEVELOPER_DOORDASH,
+  kid: process.env.ACCESS_DOORDASH,
   exp: Math.floor(Date.now() / 1000 + 600),
   iat: Math.floor(Date.now() / 1000),
 };
@@ -31,7 +31,7 @@ const headers = { algorithm: "HS256", header: { "dd-ver": "DD-JWT-V1" } };
 
 const token = jwt.sign(
   data,
-  Buffer.from(accessKey.signing_secret, "base64"),
+  Buffer.from(process.env.SECRET_DOORDASH, "base64"),
   headers
 );
 
@@ -327,7 +327,7 @@ const handlePaymentIntentId = async (customer, data) => {
     const UpdatedPaymentIntent = await Order.findByIdAndUpdate(orderLinker, {
       paymentIntentId: data.payment_intent,
     });
-    console.log(UpdatedPaymentIntentw);
+    console.log(UpdatedPaymentIntent);
   } catch (error) {
     console.log(error);
   }

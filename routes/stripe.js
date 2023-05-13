@@ -158,7 +158,7 @@ async function sendEmail(sentOrderInfo) {
    <h2 style="font-size:1rem;">Thank you so much for your order!</h2>
    <h2 style="font-size:1rem;">ORDER CREATED AT:</h2> 
    <h2 style="font-size:1rem; text-align: center;">${moment(date)
-     .utcOffset("-0400")
+     .utcOffset("-0700")
      .format("MM.DD. h:mm A")}
   </h2>
 

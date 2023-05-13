@@ -46,6 +46,9 @@ async function sendEmail(sentOrderInfo) {
   let itemVarietyTwo;
   let Pickup;
   let deliveryFee;
+  let date;
+  date = moment();
+  moment(date).utcOffset("-0400").format("MM.DD. h:mm A");
 
   if (sentOrderInfo[0].pickup) {
     deliveryFee = "";
@@ -154,9 +157,9 @@ async function sendEmail(sentOrderInfo) {
    }</h1>
    <h2 style="font-size:1rem;">Thank you so much for your order!</h2>
    <h2 style="font-size:1rem;">ORDER CREATED AT:</h2> 
-   <h2 style="font-size:1rem; text-align: center;">${moment().format(
-     "MM.DD. h:mm A"
-   )}
+   <h2 style="font-size:1rem; text-align: center;">${moment(date)
+     .utcOffset("-0400")
+     .format("MM.DD. h:mm A")}
   </h2>
 
   ${Pickup}

@@ -349,7 +349,7 @@ const doordashDelivery = async (customer, data) => {
     const sentOrderInfo = await Order.find({ _id: orderLinker });
     const pickupBoolean = sentOrderInfo[0].pickup;
     if (pickupBoolean) {
-      console.log("This is a pickup order!");
+      console.log("This is a pickup order!!");
       sendEmail(sentOrderInfo).catch((e) => console.log(e));
     } else {
       handleDeliveryRequest(sentOrderInfo);

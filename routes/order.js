@@ -123,19 +123,19 @@ router.post("/", async (req, res) => {
 // });
 
 // Update to Paid
-router.put("/order-paid", (req, res) => {
-  const updatedOrder = Order.findByIdAndUpdate(
-    req.body.orderLinker,
-    { payment_status: "paid" },
-    function (err, result) {
-      if (err) {
-        res.send(err);
-      } else {
-        res.send(result);
-      }
-    }
-  );
-});
+// router.put("/order-paid", (req, res) => {
+//   const updatedOrder = Order.findByIdAndUpdate(
+//     req.body.orderLinker,
+//     { payment_status: "paid" },
+//     function (err, result) {
+//       if (err) {
+//         res.send(err);
+//       } else {
+//         res.send(result);
+//       }
+//     }
+//   );
+// });
 
 //Delete
 router.delete("/:id", verifyTokenAndAdmin, async (req, res) => {
@@ -189,6 +189,34 @@ router.get("/find/order/:id", verifyTokenAndAdmin, async (req, res) => {
   try {
     const order = await Order.findById(req.params.id);
     return res.status(200).json(order);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+
+//Get Order by Id Public
+router.get("/lookup/:id", async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.id);
+    const modifiedOrder = (({
+      address,
+      dropoff_contact_family_name,
+      customerId,
+      paymentIntentId,
+      userId,
+      __v,
+      updatedAt,
+      totalWithTip,
+      phone,
+      tip,
+      total,
+      taxes,
+      subtotal,
+      products,
+      doordashSupportId,
+      ...o
+    }) => o)(order._doc);
+    return res.status(200).json(modifiedOrder);
   } catch (err) {
     res.status(500).json(err);
   }

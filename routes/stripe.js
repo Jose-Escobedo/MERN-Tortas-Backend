@@ -186,6 +186,8 @@ async function sendEmail(sentOrderInfo) {
    </div>
    <div style="display: flex; flex-direction:column; justify-content:center; align-items:center; padding:20px">
     <h2>Order Total: $ ${sentOrderInfo[0].total.toFixed(2)}</h2>
+    <h1 style="font-size:1rem">Want to track your order?</h1>
+    <h2 style="font-size:.8rem">Simply, copy and paste your order # into our Order Lookup page on our website.</h2>
    </div>
  </div>
 

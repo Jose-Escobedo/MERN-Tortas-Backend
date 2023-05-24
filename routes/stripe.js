@@ -163,11 +163,17 @@ async function sendEmail(sentOrderInfo) {
   </h2>
 
   ${Pickup}
+  <br></br>
+  <h1 style="font-weight:700; font-size: 1rem;">Order ID #:</h1>
+  <br></br>
+  <h2 style="font-weight:300; font-size: .8rem;">${sentOrderInfo[0]._id}</h2>
+  <br></br>
  </div>
  <div style="display: flex; flex-direction:column;   padding:20px; background-color:#F8F8FF;">
     <div style=" margin: auto">
       <h1 style="font-weight:700; font-size: 2rem; border-bottom:1px solid black;">ORDER SUMMARY:</h1>
    </div>
+ 
    ${productHtml}
    <div>
    <h2 style="font-size:1rem">Subtotal: $ ${sentOrderInfo[0].subtotal.toFixed(

@@ -163,10 +163,8 @@ async function sendEmail(sentOrderInfo) {
   </h2>
 
   ${Pickup}
-  <br></br>
   <h1 style="font-weight:700; font-size: 1rem;">Order ID #:</h1>
-  <br></br>
-  <h2 style="font-weight:300; font-size: .8rem;">${sentOrderInfo[0]._id}</h2>
+  <h2 style="font-weight:300; font-size: 1rem;">${sentOrderInfo[0]._id}</h2>
   <br></br>
  </div>
  <div style="display: flex; flex-direction:column;   padding:20px; background-color:#F8F8FF;">

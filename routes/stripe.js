@@ -62,7 +62,7 @@ async function sendEmail(sentOrderInfo) {
     let formattedDate;
 
     if (sentOrderInfo[0].pickup_date === "today") {
-      formattedDate = moment(date).utcOffset("-0700").format("MM.DD.");
+      formattedDate = "";
     } else {
       formattedDate = moment(formattedDate).format("MM.DD.");
     }

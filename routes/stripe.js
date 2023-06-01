@@ -45,6 +45,8 @@ async function sendEmail(sentOrderInfo) {
   let itemComboTwo;
   let itemVarietyTwo;
   let Pickup;
+  let PickupDate;
+  let PickupTime;
   let deliveryFee;
   let date;
   date = moment();
@@ -54,6 +56,26 @@ async function sendEmail(sentOrderInfo) {
     deliveryFee = "";
   } else {
     deliveryFee = `<h2 style="font-size:1rem">Delivery Fee: $ 4.99</h2>`;
+  }
+
+  if (sentOrderInfo[0].pickup_date) {
+    let formattedDate;
+
+    if (sentOrderInfo[0].pickup_date === "today") {
+      formattedDate = sentOrderInfo[0].pickup_date;
+    } else {
+      formattedDate = moment(formattedDate).format("MM.DD. h:mm A");
+    }
+
+    PickupDate = `<h2 style="font-weight:300;font-size:.8rem;">${formattedDate}</h2>`;
+  } else {
+    PickupDate = "";
+  }
+
+  if (sentOrderInfo[0].pickup_time) {
+    PickupTime = `<h2 style="font-weight:300;font-size:.8rem;">${sentOrderInfo[0].pickup_date}</h2>`;
+  } else {
+    PickupTime = "";
   }
 
   if (sentOrderInfo[0].address === "11040 Ventura Blvd Studio City, CA 91604") {
@@ -163,6 +185,8 @@ async function sendEmail(sentOrderInfo) {
   </h2>
 
   ${Pickup}
+  ${PickupDate}
+  ${PickupTime}
   <h1 style="font-weight:700; font-size: 1rem;">Order ID #:</h1>
   <h2 style="font-weight:300; font-size: 1rem;">${sentOrderInfo[0]._id}</h2>
   <br></br>

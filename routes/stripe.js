@@ -62,9 +62,9 @@ async function sendEmail(sentOrderInfo) {
     let formattedDate;
 
     if (sentOrderInfo[0].pickup_date === "today") {
-      formattedDate = sentOrderInfo[0].pickup_date;
+      formattedDate = moment(date).utcOffset("-0700").format("MM.DD.");
     } else {
-      formattedDate = moment(formattedDate).format("MM.DD. h:mm A");
+      formattedDate = moment(formattedDate).format("MM.DD.");
     }
 
     PickupDate = `<h2 style="font-weight:300;font-size:.8rem;">${formattedDate}</h2>`;
@@ -73,7 +73,7 @@ async function sendEmail(sentOrderInfo) {
   }
 
   if (sentOrderInfo[0].pickup_time) {
-    PickupTime = `<h2 style="font-weight:300;font-size:.8rem;">${sentOrderInfo[0].pickup_date}</h2>`;
+    PickupTime = `<h2 style="font-weight:300;font-size:.8rem;">${sentOrderInfo[0].pickup_time}</h2>`;
   } else {
     PickupTime = "";
   }

@@ -159,11 +159,16 @@ async function sendEmail(sentOrderInfo) {
   </h2>
 
   ${Pickup}
+  <h1 style="font-weight:700; font-size: 1rem;">Order ID #:</h1>
+  
+  <h2 style="font-weight:300; font-size: 1rem;">${sentOrderInfo[0]._id}</h2>
+ 
  </div>
  <div style="display: flex; flex-direction:column;   padding:20px; background-color:#F8F8FF;">
     <div style=" margin: auto">
       <h1 style="font-weight:700; font-size: 2rem; border-bottom:1px solid black;">ORDER SUMMARY:</h1>
    </div>
+
    ${productHtml}
    <div>
    <h2 style="font-size:1rem">Subtotal: $ ${sentOrderInfo[0].subtotal.toFixed(
@@ -178,6 +183,8 @@ async function sendEmail(sentOrderInfo) {
    </div>
    <div style="display: flex; flex-direction:column; justify-content:center; align-items:center; padding:20px">
     <h2>Order Total: $ ${sentOrderInfo[0].total.toFixed(2)}</h2>
+    <h1 style="font-size:1rem">Want to track your order?</h1>
+    <h2 style="font-size:.8rem">Simply, copy and paste your order # into our <a href="https://www.tortasmexico-studiocity.com/order-lookup">Order Lookup</a> page on our website.</h2>
    </div>
  </div>
 
@@ -392,7 +399,7 @@ const handleDeliveryRequest = (sentOrderInfo) => {
     pickup_phone_number: "+18187602571",
     pickup_instructions: "Located in Plaza next to Super Cuts.",
     dropoff_address: sentOrderInfo[0].address,
-    dropoff_business_name: sentOrderInfo[0].dropoff_contact_given_name,
+    dropoff_contact_given_name: sentOrderInfo[0].dropoff_contact_given_name,
     dropoff_phone_number: sentOrderInfo[0].phone,
     dropoff_instructions: sentOrderInfo[0].dropoff_instructions,
     tip: sentOrderInfo[0].tip * 100,

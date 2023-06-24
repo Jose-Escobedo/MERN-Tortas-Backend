@@ -429,7 +429,7 @@ const handleDeliveryRequest = (sentOrderInfo) => {
     pickup_phone_number: "+18187602571",
     pickup_instructions: "Located in Plaza next to Super Cuts.",
     dropoff_address: sentOrderInfo[0].address,
-    dropoff_business_name: sentOrderInfo[0].dropoff_contact_given_name,
+    dropoff_contact_given_name: sentOrderInfo[0].dropoff_contact_given_name,
     dropoff_phone_number: sentOrderInfo[0].phone,
     dropoff_instructions: sentOrderInfo[0].dropoff_instructions,
     tip: sentOrderInfo[0].tip * 100,

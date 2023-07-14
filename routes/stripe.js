@@ -4,20 +4,11 @@ const express = require("express");
 const app = express();
 const Order = require("../models/Order");
 const router = require("express").Router();
-const http = require("http");
-const { Server } = require("socket.io");
-const server = http.createServer(app);
 const jwt = require("jsonwebtoken");
 const axios = require("axios");
 const uuidv4 = require("uuid").v4;
 const nodeMailer = require("nodemailer");
 const moment = require("moment-timezone");
-
-const io = new Server(server, {
-  cors: {
-    origin: "http://localhost:3006",
-  },
-});
 
 const accessKey = {
   developer_id: process.env.DEVELOPER_DOORDASH,
@@ -340,7 +331,7 @@ const handlePaymentIntentId = async (customer, data) => {
     const UpdatedPaymentIntent = await Order.findByIdAndUpdate(orderLinker, {
       paymentIntentId: data.payment_intent,
     });
-    console.log(UpdatedPaymentIntentw);
+    console.log(UpdatedPaymentIntent);
   } catch (error) {
     console.log(error);
   }
@@ -429,6 +420,7 @@ endpointSecret =
   "whsec_bd73383ed0fcf9cfb27bd4929af341605ad32577dfd8825e1143425b846bb3c3";
 
 router.post("/webhook", (request, response) => {
+  const io = request.app.get("socketio");
   const sig = request.headers["stripe-signature"];
 
   let data;
@@ -466,6 +458,7 @@ router.post("/webhook", (request, response) => {
         doordashDelivery(customer, data);
         handleCustomerStripeId(customer, data);
         handlePaymentIntentId(customer, data);
+        io.emit("NewOrder");
       })
       .catch((err) => console.log(err.message));
   }

@@ -43,7 +43,7 @@ app.use(
     },
   })
 );
-
+app.set("socketio", io);
 io.on("connection", (socket) => {
   console.log(`User connected: ${socket.id}`);
 });
@@ -56,6 +56,7 @@ app.use("/api/orders", ordersRoute);
 app.use("/api/checkout", stripeRoute);
 app.use("/api/admin", adminRoute);
 app.set("/api/doordash", doordashRoute);
+
 // app.use("/api/doordash", doordashRouteGet);
 
 server.listen(process.env.PORT || 5000, () => {

@@ -45,9 +45,9 @@ app.use(
 );
 
 app.set("socketio", io);
-io.on("connection", (socket) => {
-  console.log(`User connected: ${socket.id}`);
-});
+// io.on("connection", (socket) => {
+//   console.log(`User connected: ${socket.id}`);
+// });
 
 app.use("/api/users", usersRoute);
 app.use("/api/auth", authRoute);

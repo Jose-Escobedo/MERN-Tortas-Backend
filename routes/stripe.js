@@ -456,6 +456,7 @@ const handleDeliveryRequest = (sentOrderInfo) => {
 router.post("/webhook", (request, response) => {
   let endpointSecret;
   endpointSecret = process.env.STRIPE_ENDPOINT_SECRET;
+  const io = request.app.get("socketio");
   const sig = request.headers["stripe-signature"];
 
   let data;
@@ -493,6 +494,7 @@ router.post("/webhook", (request, response) => {
         doordashDelivery(customer, data);
         handleCustomerStripeId(customer, data);
         handlePaymentIntentId(customer, data);
+        io.emit("NewOrder");
       })
       .catch((err) => console.log(err.message));
   }

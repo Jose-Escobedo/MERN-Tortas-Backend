@@ -12,6 +12,16 @@ const adminRoute = require("./routes/admin");
 const doordashRoute = require("./routes/doordashGet");
 const cors = require("cors");
 
+const http = require("http");
+const { Server } = require("socket.io");
+const server = http.createServer(app);
+
+const io = new Server(server, {
+  cors: {
+    origin: "http://tortasbackend.herokuapp.com",
+  },
+});
+
 dotenv.config();
 const corsOptions = {
   origin: ["https://www.tortasmexico-studiocity.com"],
@@ -33,6 +43,11 @@ app.use(
     },
   })
 );
+
+app.set("socketio", io);
+io.on("connection", (socket) => {
+  console.log(`User connected: ${socket.id}`);
+});
 
 app.use("/api/users", usersRoute);
 app.use("/api/auth", authRoute);

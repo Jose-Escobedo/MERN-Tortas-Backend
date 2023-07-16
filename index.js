@@ -18,7 +18,7 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: "http://tortasbackend.herokuapp.com",
+    origin: "https://tortasbackend.herokuapp.com",
   },
 });
 

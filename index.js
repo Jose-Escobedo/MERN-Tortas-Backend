@@ -43,8 +43,9 @@ app.use(
     },
   })
 );
-
+io.attach(server);
 app.set("socketio", io);
+
 io.on("connection", (socket) => {
   console.log(`User connected: ${socket.id}`);
 });

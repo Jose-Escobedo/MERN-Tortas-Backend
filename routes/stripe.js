@@ -303,15 +303,7 @@ router.post("/payment", async (req, res) => {
   console.log(req.body.cart);
   console.log(req.body.contact);
   const toCent = (item) => {
-    const str = item.toString();
-    const int = str.split(".");
-
-    return Number(
-      item
-        .toFixed(2)
-        .replace(".", "")
-        .padEnd(int.length === 1 ? 3 : 4, "0")
-    );
+    return Math.round((Math.abs(item) / 100) * 10000);
   };
 
   // Create a PaymentIntent with the order amount and currency

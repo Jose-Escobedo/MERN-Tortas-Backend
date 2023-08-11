@@ -36,17 +36,16 @@ mongoose
     console.log(err);
   });
 
-if (process.env.NODE_ENV === "production") {
-  self.app.all(/.*/, function (req, res, next) {
-    var host = req.header("host");
-    if (host.match(/^www\..*/i)) {
-      next();
-    } else {
-      res.redirect(301, "https://www." + host + req.url);
-    }
-  });
-  app.use("/", express.static("public"));
-}
+self.app.all(/.*/, function (req, res, next) {
+  var host = req.header("host");
+  if (host.match(/^www\..*/i)) {
+    next();
+  } else {
+    res.redirect(301, "https://www." + host + req.url);
+  }
+});
+app.use("/", express.static("public"));
+
 app.use(cors(corsOptions));
 app.use(
   express.json({

@@ -11,6 +11,7 @@ const stripeRoute = require("./routes/stripe");
 const adminRoute = require("./routes/admin");
 const doordashRoute = require("./routes/doordashGet");
 const cors = require("cors");
+var enforce = require("express-sslify");
 
 const { Server } = require("socket.io");
 const server = app.listen(process.env.PORT || 5000, () => {
@@ -36,15 +37,7 @@ mongoose
     console.log(err);
   });
 
-self.app.all(/.*/, function (req, res, next) {
-  var host = req.header("host");
-  if (host.match(/^www\..*/i)) {
-    next();
-  } else {
-    res.redirect(301, "https://www." + host + req.url);
-  }
-});
-app.use("/", express.static("public"));
+app.use(enforce.HTTPS({ trustProtoHeader: true }));
 
 app.use(cors(corsOptions));
 app.use(

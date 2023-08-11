@@ -12,9 +12,10 @@ const adminRoute = require("./routes/admin");
 const doordashRoute = require("./routes/doordashGet");
 const cors = require("cors");
 
-const https = require("https");
 const { Server } = require("socket.io");
-const server = https.createServer(app);
+const server = app.listen(process.env.PORT || 5000, () => {
+  console.log("backend is running!");
+});
 
 const io = new Server(server, {
   cors: {
@@ -55,7 +56,3 @@ app.use("/api/checkout", stripeRoute);
 app.use("/api/admin", adminRoute);
 app.set("/api/doordash", doordashRoute);
 // app.use("/api/doordash", doordashRouteGet);
-
-app.listen(process.env.PORT || 5000, () => {
-  console.log("backend is running!");
-});

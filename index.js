@@ -43,7 +43,7 @@ app.use(
     },
   })
 );
-io.attach(server);
+// io.attach(server);
 app.set("socketio", io);
 
 io.on("connection", (socket) => {

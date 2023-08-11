@@ -46,10 +46,6 @@ app.use(
 // io.attach(server);
 app.set("socketio", io);
 
-io.on("connection", (socket) => {
-  console.log(`User connected: ${socket.id}`);
-});
-
 app.use("/api/users", usersRoute);
 app.use("/api/auth", authRoute);
 app.use("/api/products", productsRoute);

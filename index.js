@@ -37,11 +37,15 @@ mongoose
   });
 
 if (process.env.NODE_ENV === "production") {
-  app.use((req, res, next) => {
-    if (req.header("x-forwarded-proto") !== "https")
-      res.redirect(`https://${req.header("host")}${req.url}`);
-    else next();
+  self.app.all(/.*/, function (req, res, next) {
+    var host = req.header("host");
+    if (host.match(/^www\..*/i)) {
+      next();
+    } else {
+      res.redirect(301, "https://www." + host + req.url);
+    }
   });
+  app.use("/", express.static("public"));
 }
 app.use(cors(corsOptions));
 app.use(

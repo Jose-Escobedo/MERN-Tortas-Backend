@@ -18,7 +18,7 @@ const server = https.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: "https://tortasmexico-studiocity.com",
+    origin: "https://www.tortasmexico-studiocity.com",
   },
 });
 

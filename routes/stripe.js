@@ -306,7 +306,12 @@ router.post("/payment", async (req, res) => {
     const str = item.toString();
     const int = str.split(".");
 
-    return Number(item.replace(".", "").padEnd(int.length === 1 ? 3 : 4, "0"));
+    return Number(
+      item
+        .toFixed(2)
+        .replace(".", "")
+        .padEnd(int.length === 1 ? 3 : 4, "0")
+    );
   };
 
   // Create a PaymentIntent with the order amount and currency

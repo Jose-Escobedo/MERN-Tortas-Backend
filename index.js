@@ -11,20 +11,22 @@ const stripeRoute = require("./routes/stripe");
 const adminRoute = require("./routes/admin");
 const doordashRoute = require("./routes/doordashGet");
 const cors = require("cors");
+var enforce = require("express-sslify");
 
-const http = require("http");
 const { Server } = require("socket.io");
-const server = http.createServer(app);
+const server = app.listen(process.env.PORT || 5000, () => {
+  console.log("backend is running!");
+});
 
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:3006",
+    origin: "https://www.tortasmexico-studiocity.com",
   },
 });
 
 dotenv.config();
 const corsOptions = {
-  origin: ["http://localhost:3006", "http://localhost:3007"],
+  origin: ["https://www.tortasmexico-studiocity.com"],
   optionSuccessStatus: 200,
 };
 
@@ -34,6 +36,9 @@ mongoose
   .catch((err) => {
     console.log(err);
   });
+
+app.use(enforce.HTTPS({ trustProtoHeader: true }));
+
 app.use(cors(corsOptions));
 app.use(
   express.json({
@@ -58,7 +63,3 @@ app.use("/api/admin", adminRoute);
 app.set("/api/doordash", doordashRoute);
 
 // app.use("/api/doordash", doordashRouteGet);
-
-server.listen(process.env.PORT || 5000, () => {
-  console.log("backend is running!");
-});

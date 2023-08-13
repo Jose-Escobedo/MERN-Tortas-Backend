@@ -18,8 +18,8 @@ const accessKey = {
 
 const data = {
   aud: "doordash",
-  iss: accessKey.developer_id,
-  kid: accessKey.key_id,
+  iss: process.env.DEVELOPER_DOORDASH,
+  kid: process.env.ACCESS_DOORDASH,
   exp: Math.floor(Date.now() / 1000 + 600),
   iat: Math.floor(Date.now() / 1000),
 };
@@ -28,7 +28,7 @@ const headers = { algorithm: "HS256", header: { "dd-ver": "DD-JWT-V1" } };
 
 const token = jwt.sign(
   data,
-  Buffer.from(accessKey.signing_secret, "base64"),
+  Buffer.from(process.env.SECRET_DOORDASH, "base64"),
   headers
 );
 
@@ -42,6 +42,38 @@ async function sendEmail(sentOrderInfo) {
   let itemComboTwo;
   let itemVarietyTwo;
   let Pickup;
+  let PickupDate;
+  let PickupTime;
+  let deliveryFee;
+  let date;
+  date = moment();
+  moment(date).utcOffset("-0400").format("MM.DD. h:mm A");
+
+  if (sentOrderInfo[0].pickup) {
+    deliveryFee = "";
+  } else {
+    deliveryFee = `<h2 style="font-size:1rem">Delivery Fee: $ 4.99</h2>`;
+  }
+
+  if (sentOrderInfo[0].pickup_date) {
+    let formattedDate;
+
+    if (sentOrderInfo[0].pickup_date === "today") {
+      formattedDate = "";
+    } else {
+      formattedDate = moment(formattedDate).format("MM.DD.");
+    }
+
+    PickupDate = `<h2 style="font-weight:300;font-size:.8rem;">${formattedDate}</h2>`;
+  } else {
+    PickupDate = "";
+  }
+
+  if (sentOrderInfo[0].pickup_time) {
+    PickupTime = `<h2 style="font-weight:300;font-size:.8rem;">${sentOrderInfo[0].pickup_time}</h2>`;
+  } else {
+    PickupTime = "";
+  }
 
   if (sentOrderInfo[0].address === "11040 Ventura Blvd Studio City, CA 91604") {
     Pickup = `<h2 style="font-size:1.2rem;">PICKUP</h2>`;
@@ -144,22 +176,23 @@ async function sendEmail(sentOrderInfo) {
    }</h1>
    <h2 style="font-size:1rem;">Thank you so much for your order!</h2>
    <h2 style="font-size:1rem;">ORDER CREATED AT:</h2> 
-   <h2 style="font-size:1rem; text-align: center;">${moment().format(
-     "MM.DD. h:mm A"
-   )}
+   <h2 style="font-size:1rem; text-align: center;">${moment(date)
+     .utcOffset("-0700")
+     .format("MM.DD. h:mm A")}
   </h2>
 
   ${Pickup}
+  ${PickupDate}
+  ${PickupTime}
   <h1 style="font-weight:700; font-size: 1rem;">Order ID #:</h1>
-  
   <h2 style="font-weight:300; font-size: 1rem;">${sentOrderInfo[0]._id}</h2>
- 
+  <br></br>
  </div>
  <div style="display: flex; flex-direction:column;   padding:20px; background-color:#F8F8FF;">
     <div style=" margin: auto">
       <h1 style="font-weight:700; font-size: 2rem; border-bottom:1px solid black;">ORDER SUMMARY:</h1>
    </div>
-
+ 
    ${productHtml}
    <div>
    <h2 style="font-size:1rem">Subtotal: $ ${sentOrderInfo[0].subtotal.toFixed(
@@ -169,7 +202,7 @@ async function sendEmail(sentOrderInfo) {
       <h2 style="font-size:1rem">Taxes: $ ${sentOrderInfo[0].taxes.toFixed(
         2
       )}</h2>
-      <h2 style="font-size:1rem">Delivery Fee: $ 4.99</h2>
+      ${deliveryFee}
       <h2 style="font-size:1rem">Tip: $ ${sentOrderInfo[0].tip}</h2>
    </div>
    <div style="display: flex; flex-direction:column; justify-content:center; align-items:center; padding:20px">
@@ -184,12 +217,15 @@ async function sendEmail(sentOrderInfo) {
   href="https://www.google.com/maps/place/Tortas+Mexico+Restaurant/@34.140505,-118.3736457,17z/data=!3m1!4b1!4m5!3m4!1s0x80c2be150a3a4a87:0x4bb0951e3b36f3c2!8m2!3d34.1405406!4d-118.3715541?hl=en">
             11040 Ventura Blvd, Studio City CA 91604
           </a>
+          <br></br>
           <a href="tel:+18187602571" style="font-size:.8rem; text-decoration: none; color: teal; padding-bottom:10px;">
             +1 (818) 760-2571
           </a>
+          <br></br>
           <a style="font-size:.8rem; text-decoration: none; color:teal; padding-bottom:10px;" href="https://www.tortasmexico-studiocity.com">
             tortasmexico-studiocity.com
           </a>
+          <br></br>
           <a href="mailto:support@tortasmexico-studiocity.com" style="font-size:.8rem; text-decoration: none; color:teal;">
             support@tortasmexico-studiocity.com
           </a>
@@ -264,10 +300,7 @@ router.post("/payment", async (req, res) => {
   console.log(req.body.cart);
   console.log(req.body.contact);
   const toCent = (item) => {
-    const str = item.toString();
-    const int = str.split(".");
-
-    return Number(item.replace(".", "").padEnd(int.length === 1 ? 3 : 4, "0"));
+    return Math.round((Math.abs(item) / 100) * 10000);
   };
 
   // Create a PaymentIntent with the order amount and currency
@@ -292,8 +325,8 @@ router.post("/payment", async (req, res) => {
     ],
     customer: customer.id,
     mode: "payment",
-    success_url: `http://localhost:3006/success`,
-    cancel_url: `http://localhost:3006/cart`,
+    success_url: `https://www.tortasmexico-studiocity.com/success`,
+    cancel_url: `https://www.tortasmexico-studiocity.com/cart`,
   });
   res.json({ url: session.url, contact: session.contact });
 });
@@ -343,7 +376,7 @@ const doordashDelivery = async (customer, data) => {
     const sentOrderInfo = await Order.find({ _id: orderLinker });
     const pickupBoolean = sentOrderInfo[0].pickup;
     if (pickupBoolean) {
-      console.log("This is a pickup order!");
+      console.log("This is a pickup order!!");
       sendEmail(sentOrderInfo).catch((e) => console.log(e));
     } else {
       handleDeliveryRequest(sentOrderInfo);
@@ -415,13 +448,7 @@ const handleDeliveryRequest = (sentOrderInfo) => {
     });
 };
 
-// This is your Stripe CLI webhook secret for testing your endpoint locally.
-let endpointSecret;
-endpointSecret =
-  "whsec_bd73383ed0fcf9cfb27bd4929af341605ad32577dfd8825e1143425b846bb3c3";
-
 router.post("/webhook", (request, response) => {
-  const io = request.app.get("socketio");
   const sig = request.headers["stripe-signature"];
 
   let data;

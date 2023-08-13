@@ -318,7 +318,7 @@ const handleCustomerStripeId = async (customer, data) => {
     const UpdatedCustomerStripeId = await Order.findByIdAndUpdate(orderLinker, {
       customerId: customer.id,
     });
-    console.log(id);
+    console.log(UpdatedCustomerStripeId);
   } catch (error) {
     console.log(error);
   }
@@ -393,6 +393,7 @@ const handleDeliveryRequest = (sentOrderInfo) => {
     dropoff_contact_given_name: sentOrderInfo[0].dropoff_contact_given_name,
     dropoff_phone_number: sentOrderInfo[0].phone,
     dropoff_instructions: sentOrderInfo[0].dropoff_instructions,
+    pickup_time: sentOrderInfo[0].pickup_time,
     tip: sentOrderInfo[0].tip * 100,
     order_value: sentOrderInfo[0].total * 100,
   });

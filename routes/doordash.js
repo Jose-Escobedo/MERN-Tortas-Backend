@@ -27,9 +27,7 @@ router.post("/create-delivery", async (req, res) => {
     signing_secret: process.env.SECRET_DOORDASH,
   });
 
-  const response = await client.deliveryQuoteAccept(
-    "ff3f2cd7-71b9-408a-bdb7-d8c159ac27a1"
-  );
+  const response = await client.deliveryQuoteAccept("64b0a813594cca17730b0a9e");
   res.send(response);
   console.log(response);
 });

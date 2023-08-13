@@ -48,6 +48,7 @@ async function sendEmail(sentOrderInfo) {
   let PickupDate;
   let PickupTime;
   let deliveryFee;
+  let orderTip;
   let date;
   date = moment();
   moment(date).utcOffset("-0400").format("MM.DD. h:mm A");
@@ -56,6 +57,12 @@ async function sendEmail(sentOrderInfo) {
     deliveryFee = "";
   } else {
     deliveryFee = `<h2 style="font-size:1rem">Delivery Fee: $ 4.99</h2>`;
+  }
+
+  if (!sentOrderInfo[0].tip || sentOrderInfo[0].tip === "") {
+    orderTip = "";
+  } else {
+    orderTip = `<h2 style="font-size:1rem">Tip: $ ${sentOrderInfo[0].tip}</h2>`;
   }
 
   if (sentOrderInfo[0].pickup_date) {
@@ -206,7 +213,7 @@ async function sendEmail(sentOrderInfo) {
         2
       )}</h2>
       ${deliveryFee}
-      <h2 style="font-size:1rem">Tip: $ ${sentOrderInfo[0].tip}</h2>
+      ${orderTip}
    </div>
    <div style="display: flex; flex-direction:column; justify-content:center; align-items:center; padding:20px">
     <h2>Order Total: $ ${sentOrderInfo[0].total.toFixed(2)}</h2>
@@ -429,6 +436,7 @@ const handleDeliveryRequest = (sentOrderInfo) => {
     dropoff_contact_given_name: sentOrderInfo[0].dropoff_contact_given_name,
     dropoff_phone_number: sentOrderInfo[0].phone,
     dropoff_instructions: sentOrderInfo[0].dropoff_instructions,
+
     tip: sentOrderInfo[0].tip * 100,
     order_value: sentOrderInfo[0].total * 100,
   });

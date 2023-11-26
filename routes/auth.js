@@ -52,7 +52,7 @@ router.post("/login", async (req, res) => {
           isAdmin: user.isAdmin,
         },
         process.env.ACCESS_TOKEN_SECRET,
-        { expiresIn: "1d" }
+        { expiresIn: "7d" }
       );
       const refreshToken = jwt.sign(
         {

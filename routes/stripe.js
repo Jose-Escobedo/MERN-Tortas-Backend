@@ -420,9 +420,11 @@ const handleDoordashTracking = async (res, id) => {
 };
 
 const handleDeliveryRequest = (sentOrderInfo) => {
-  if (sentOrderInfo[0].pickup_time == null || sentOrderInfo[0].pickup_time == ""){
-    sentOrderInfo[0].pickup_time = new Date().toISOString();
-  } 
+  let pickupTime = sentOrderInfo[0].pickup_time;
+
+  if (pickupTime == null || pickupTime === "") {
+    pickupTime = new Date().toISOString();
+  }
 
   const toCent = (item) => {
     const str = item.toString();
@@ -435,12 +437,13 @@ const handleDeliveryRequest = (sentOrderInfo) => {
     pickup_address: "11040 Ventura Blvd Studio City, CA 91604",
     pickup_business_name: "Tortas Mexico Studio City",
     pickup_phone_number: "+18187602571",
-    pickup_time: sentOrderInfo[0].pickup_time,
+    pickup_time: pickupTime,
     pickup_instructions: "Located in Plaza next to Super Cuts.",
     dropoff_address: sentOrderInfo[0].address,
     dropoff_contact_given_name: sentOrderInfo[0].dropoff_contact_given_name,
     dropoff_phone_number: sentOrderInfo[0].phone,
-    dropoff_instructions: sentOrderInfo[0].dropoff_instructions,
+    dropoff_instructions: sentOrderInfo[0].dropoff_instructions +
+    (sentOrderInfo[0].dropoff_suite ? " Suite " + sentOrderInfo[0].dropoff_suite : ""),
 
     tip: sentOrderInfo[0].tip * 100,
     order_value: sentOrderInfo[0].total * 100,

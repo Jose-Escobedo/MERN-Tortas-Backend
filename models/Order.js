@@ -24,6 +24,7 @@ const OrderSchema = new mongoose.Schema(
     dropoff_contact_family_name: { type: String },
     address: { type: String, required: true },
     dropoff_instructions: { type: String },
+    dropoff_suite: { type: String },
     pickup_instructions: { type: String },
     pickup_date: { type: String },
     pickup_time: { type: String },

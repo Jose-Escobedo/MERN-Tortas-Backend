@@ -422,7 +422,7 @@ const handleDoordashTracking = async (res, id) => {
 const handleDeliveryRequest = (sentOrderInfo) => {
   let pickupTime = sentOrderInfo[0].pickup_time;
 
-  if (pickupTime == null || pickupTime === "") {
+  if (pickupTime == null || pickupTime == "") {
     pickupTime = new Date();
     pickupTime.setMinutes(pickupTime.getMinutes() + 15);
     pickupTime = pickupTime.toISOString();

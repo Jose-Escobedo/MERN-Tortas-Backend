@@ -10,6 +10,16 @@ const {
 
 //Create
 router.post("/", async (req, res) => {
+  let pickupTime;
+  if(!req.body.pickup){
+      pickupTime = new Date();
+      pickupTime.setMinutes(pickupTime.getMinutes() + 15);
+      pickupTime = pickupTime.toISOString();
+  }else{
+    pickupTime = req.body.pickup_time;
+  }
+
+
   const newOrder = Order({
     userId: req.body.userId,
     products: req.body.products,
@@ -21,7 +31,7 @@ router.post("/", async (req, res) => {
     dropoff_suite:  req.body.dropoff_suite,
     pickup_instructions: req.body.pickup_instructions,
     pickup_date: req.body.pickup_date,
-    pickup_time: req.body.pickup_time,
+    pickup_time:  pickupTime,
     dropoff_contact_given_name: req.body.dropoff_contact_given_name,
     dropoff_contact_family_name: req.body.dropoff_contact_family_name,
     address: req.body.address,

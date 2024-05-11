@@ -423,7 +423,11 @@ const handleDeliveryRequest = (sentOrderInfo) => {
   let pickupTime = sentOrderInfo[0].pickup_time;
 
   if (pickupTime == null || pickupTime === "") {
-    pickupTime = new Date().toISOString();
+    pickupTime = new Date();
+    pickupTime.setMinutes(pickupTime.getMinutes() + 15);
+    pickupTime = pickupTime.toISOString();
+  }else{
+    pickupTime = sentOrderInfo[0].pickup_time;
   }
 
   const toCent = (item) => {

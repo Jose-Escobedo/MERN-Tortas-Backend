@@ -20,13 +20,13 @@ const server = app.listen(process.env.PORT || 5000, () => {
 
 const io = new Server(server, {
   cors: {
-    origin: "https://www.tortasmexico-studiocity.com",
+    origin: "https://mern-tortas-frontend.vercel.app",
   },
 });
 
 dotenv.config();
 const corsOptions = {
-  origin: ["https://www.tortasmexico-studiocity.com"],
+  origin: ["https://mern-tortas-frontend.vercel.app"],
   optionSuccessStatus: 200,
 };
 

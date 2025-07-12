@@ -55,6 +55,8 @@ app.use("/api/users", usersRoute);
 // app.use("/api/auth", authRoute);
 app.use("/api/products", productsRoute);
 app.use("/api/carts", cartsRoute);
+console.log("MONGO_URL:", process.env.MONGO_URL);
+
 // app.use("/api/orders", ordersRoute);
 // app.use("/api/checkout", stripeRoute);
 // app.use("/api/admin", adminRoute);

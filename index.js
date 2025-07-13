@@ -2,30 +2,37 @@ const express = require("express");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const cors = require("cors");
-const productsRoute = require("./routes/product");
 
 dotenv.config();
-const app = express();
 
-// Debug: log DB connection string
+const app = express();
+const PORT = process.env.PORT || 5000;
+
 console.log("MONGO_URL:", process.env.MONGO_URL);
 
 // MongoDB connection
 mongoose
   .connect(process.env.MONGO_URL)
-  .then(() => console.log("DB CONNECTION SUCCESSFUL"))
-  .catch((err) => console.error("DB ERROR:", err));
+  .then(() => console.log("✅ DB CONNECTION SUCCESSFUL"))
+  .catch((err) => console.error("❌ DB ERROR:", err));
 
-// Middlewares
-app.use(cors({ origin: ["https://mern-tortas-frontend.vercel.app"] }));
+// Middleware
+app.use(cors());
 app.use(express.json());
 
-// Routes
-app.get("/ping", (req, res) => res.send("pong"));
-app.use("/api/products", productsRoute);
+// Test route
+app.get("/ping", (req, res) => {
+  res.send("pong");
+});
 
-// Server
-const PORT = process.env.PORT || 5000;
+// Products route
+app.get("/api/products", (req, res) => {
+  res.json([
+    { id: 1, name: "Torta de Jamón", price: 7.99 },
+    { id: 2, name: "Torta Cubana", price: 9.99 },
+  ]);
+});
+
 app.listen(PORT, () => {
-  console.log("backend is running on port", PORT);
+  console.log(`✅ Backend is running on port ${PORT}`);
 });

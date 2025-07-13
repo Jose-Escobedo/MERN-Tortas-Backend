@@ -24,7 +24,7 @@ if (process.env.NODE_ENV === "production") {
 
 // CORS + JSON config
 const corsOptions = {
-  origin: ["https://mern-tortas-frontend.vercel.app"],
+  origin: ["https://www.tortasmexico-studiocity.com"],
   optionSuccessStatus: 200,
 };
 app.use(cors(corsOptions));
@@ -51,7 +51,7 @@ const server = app.listen(PORT, "0.0.0.0", () => {
 // Socket.io setup
 const io = new Server(server, {
   cors: {
-    origin: "https://mern-tortas-frontend.vercel.app",
+    origin: "https://www.tortasmexico-studiocity.com",
   },
 });
 app.set("socketio", io);

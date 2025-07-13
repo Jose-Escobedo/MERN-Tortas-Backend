@@ -52,9 +52,6 @@ app.use(
   })
 );
 
-app.get("/", (req, res) => {
-  res.send("Tortas backend is up.");
-});
 
 
 // Routes

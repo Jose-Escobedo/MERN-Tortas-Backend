@@ -51,9 +51,6 @@ app.use(
     },
   })
 );
-app.get("/ping", (req, res) => {
-  res.send("pong");
-});
 
 // Routes
 app.use("/api/users", usersRoute);

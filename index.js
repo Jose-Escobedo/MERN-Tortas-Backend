@@ -20,16 +20,16 @@ mongoose
   .catch((err) => console.log("DB ERROR:", err));
 
 // Setup server and socket.io
-const server = app.listen(process.env.PORT || 5000, () => {
-  console.log("backend is running!");
-});
+// const server = app.listen(process.env.PORT || 5000, () => {
+//   console.log("backend is running!");
+// });
 
-const io = new Server(server, {
-  cors: {
-    origin: "https://mern-tortas-frontend.vercel.app",
-  },
-});
-app.set("socketio", io);
+// const io = new Server(server, {
+//   cors: {
+//     origin: "https://mern-tortas-frontend.vercel.app",
+//   },
+// });
+// app.set("socketio", io);
 
 // Force HTTPS only in production
 if (process.env.NODE_ENV === "production") {
